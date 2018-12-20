@@ -1,6 +1,7 @@
-<?php 
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMTag.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMRecord.php');
+<?php
+namespace ZCRM; 
+require_once realpath(dirname(__FILE__).'/../../crud/Tag.php');
+require_once realpath(dirname(__FILE__).'/../../crud/Record.php');
 require_once realpath(dirname(__FILE__).'/../../common/APIConstants.php');
 require_once realpath(dirname(__FILE__).'/../../exception/APIExceptionHandler.php');
 require_once realpath(dirname(__FILE__).'/../APIRequest.php');
@@ -29,13 +30,13 @@ class TagAPIHandler extends APIHandler
 	        $tagsList=array();
 	        foreach ($tags as $tag)
 	        {
-	            $tagInstance = ZCRMTag::getInstance($tag["id"]);
+	            $tagInstance = Tag::getInstance($tag["id"]);
 	            self::setTagProperties($tagInstance,$tag);
 	            array_push($tagsList,$tagInstance);
 	        }
 	        $responseInstance->setData($tagsList);
 	        return $responseInstance;
-	    }catch (ZCRMException $exception)
+	    }catch (Exception $exception)
 	    {
 	        APIExceptionHandler::logException($exception);
 	        throw $exception;
@@ -50,11 +51,11 @@ class TagAPIHandler extends APIHandler
 			//Fire Request
 			$responseInstance=APIRequest::getInstance($this)->getAPIResponse();
 	        $tagDetails=$responseInstance->getResponseJSON();
-	        $tagInstance = ZCRMTag::getInstance($tagId);
+	        $tagInstance = Tag::getInstance($tagId);
 	        self::setTagProperties($tagInstance,$tagDetails);
 	        $responseInstance->setData($tagInstance);
 	        return $responseInstance;
-	    }catch (ZCRMException $exception)
+	    }catch (Exception $exception)
 	    {
 	        APIExceptionHandler::logException($exception);
 	        throw $exception;
@@ -64,7 +65,7 @@ class TagAPIHandler extends APIHandler
 	{
 	    if(sizeof($tags) > 50)
 	    {
-	        throw new ZCRMException(APIConstants::API_MAX_TAGS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
+	        throw new Exception(APIConstants::API_MAX_TAGS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
 	    }
 	    try{
 	        $this->urlPath="settings/tags?module=".$this->module->getAPIName();
@@ -80,7 +81,7 @@ class TagAPIHandler extends APIHandler
 	            }
 	            else
 	            {
-	                throw new ZCRMException("Tag ID MUST be null for create operation.",APIConstants::RESPONSECODE_BAD_REQUEST);
+	                throw new Exception("Tag ID MUST be null for create operation.",APIConstants::RESPONSECODE_BAD_REQUEST);
 	            }
 	        }
 	        $requestBodyObj["tags"]=$dataArray;
@@ -109,7 +110,7 @@ class TagAPIHandler extends APIHandler
 	        }
 	        $bulkAPIResponse->setData($createdTags);
 	        return $bulkAPIResponse;
-	    }catch (ZCRMException $e){
+	    }catch (Exception $e){
 	        throw $e;
 	    }
 	}
@@ -117,7 +118,7 @@ class TagAPIHandler extends APIHandler
 	{
 	    if(sizeof($tags) > 50)
 	    {
-	        throw new ZCRMException(APIConstants::API_MAX_TAGS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
+	        throw new Exception(APIConstants::API_MAX_TAGS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
 	    }
 	    try{
 	        $this->urlPath="settings/tags?module=".$this->module->getAPIName();
@@ -155,7 +156,7 @@ class TagAPIHandler extends APIHandler
 	        }
 	        $bulkAPIResponse->setData($updatedTags);
 	        return $bulkAPIResponse;
-	    }catch (ZCRMException $e){
+	    }catch (Exception $e){
 	        throw $e;
 	    }
 	}
@@ -168,7 +169,7 @@ class TagAPIHandler extends APIHandler
 	        //Fire Request
 	        $responseInstance=APIRequest::getInstance($this)->getAPIResponse();
 	        return $responseInstance;
-	    }catch (ZCRMException $exception)
+	    }catch (Exception $exception)
 	    {
 	        APIExceptionHandler::logException($exception);
 	        throw $exception;
@@ -191,11 +192,11 @@ class TagAPIHandler extends APIHandler
 	        $responseDataArray=$responseInstance->getResponseJSON()['tags'];
 	        $responseData=$responseDataArray[0];
 	        $reponseDetails=$responseData['details'];
-	        $tag = ZCRMTag::getInstance($reponseDetails['id']);
+	        $tag = Tag::getInstance($reponseDetails['id']);
 	        self::setTagProperties($tag, $reponseDetails);
 	        $responseInstance->setData($tag);
 	        return $responseInstance;
-	    }catch (ZCRMException $e){
+	    }catch (Exception $e){
 	        throw $e;
 	    }
 	}
@@ -218,7 +219,7 @@ class TagAPIHandler extends APIHandler
 	        self::setTagProperties($tag, $reponseDetails);
 	        $responseInstance->setData($tag);
 	        return $responseInstance;
-	    }catch (ZCRMException $e){
+	    }catch (Exception $e){
 	        throw $e;
 	    }
 	}
@@ -226,7 +227,7 @@ class TagAPIHandler extends APIHandler
 	{
 	    if(sizeof($tagNames) > 10)
 	    {
-	        throw new ZCRMException(APIConstants::API_MAX_RECORD_TAGS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
+	        throw new Exception(APIConstants::API_MAX_RECORD_TAGS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
 	    }
 	    try
 	    {
@@ -246,7 +247,7 @@ class TagAPIHandler extends APIHandler
 	        $tag->setTags($reponseDetails['tags']);
 	        $responseInstance->setData($tag);
 	        return $responseInstance;
-	    }catch (ZCRMException $e){
+	    }catch (Exception $e){
 	        throw $e;
 	    }
 	}
@@ -254,7 +255,7 @@ class TagAPIHandler extends APIHandler
 	{
 	    if(sizeof($tagNames) > 10)
 	    {
-	        throw new ZCRMException(APIConstants::API_MAX_RECORD_TAGS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
+	        throw new Exception(APIConstants::API_MAX_RECORD_TAGS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
 	    }
 	    try
 	    {
@@ -274,7 +275,7 @@ class TagAPIHandler extends APIHandler
 	        $tag->setTags($reponseDetails['tags']);
 	        $responseInstance->setData($tag);
 	        return $responseInstance;
-	    }catch (ZCRMException $e){
+	    }catch (Exception $e){
 	        throw $e;
 	    }
 	}
@@ -282,11 +283,11 @@ class TagAPIHandler extends APIHandler
 	{
 	    if(sizeof($tagNames) > 10)
 	    {
-	        throw new ZCRMException(APIConstants::API_MAX_RECORD_TAGS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
+	        throw new Exception(APIConstants::API_MAX_RECORD_TAGS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
 	    }
 	    if(sizeof($recordId) > 100)
 	    {
-	        throw new ZCRMException(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
+	        throw new Exception(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
 	    }
 	    try
 	    {
@@ -312,7 +313,7 @@ class TagAPIHandler extends APIHandler
 	            {
 	                $responseData = $entityResIns->getResponseJSON();
 	                $tagDetails = $responseData["details"];
-	                $addTag = ZCRMRecord::getInstance($this->module->getAPIName(),$tagDetails["id"]);
+	                $addTag = Record::getInstance($this->module->getAPIName(),$tagDetails["id"]);
 	                $addTag->setTags($tagDetails["tags"]);
 	                array_push($addedTags,$addTag);
 	                $entityResIns->setData($addTag);
@@ -324,7 +325,7 @@ class TagAPIHandler extends APIHandler
 	        }
 	        $bulkAPIResponse->setData($addedTags);
 	        return $bulkAPIResponse;
-	    }catch (ZCRMException $e){
+	    }catch (Exception $e){
 	        throw $e;
 	    }
 	}
@@ -332,11 +333,11 @@ class TagAPIHandler extends APIHandler
 	{
 	    if(sizeof($tagNames) > 10)
 	    {
-	        throw new ZCRMException(APIConstants::API_MAX_RECORD_TAGS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
+	        throw new Exception(APIConstants::API_MAX_RECORD_TAGS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
 	    }
 	    if(sizeof($recordId) > 100)
 	    {
-	        throw new ZCRMException(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
+	        throw new Exception(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
 	    }
 	    try
 	    {
@@ -362,7 +363,7 @@ class TagAPIHandler extends APIHandler
 	            {
 	                $responseData = $entityResIns->getResponseJSON();
 	                $tagDetails = $responseData["details"];
-	                $removeTag = ZCRMRecord::getInstance($this->module->getAPIName(),$tagDetails["id"]);
+	                $removeTag = Record::getInstance($this->module->getAPIName(),$tagDetails["id"]);
 	                $removeTag->setTags($tagDetails["tags"]);
 	                array_push($removedTags,$removeTag);
 	                $entityResIns->setData($removeTag);
@@ -374,7 +375,7 @@ class TagAPIHandler extends APIHandler
 	        }
 	        $bulkAPIResponse->setData($removedTags);
 	        return $bulkAPIResponse;
-	    }catch (ZCRMException $e){
+	    }catch (Exception $e){
 	        throw $e;
 	    }
 	}
@@ -392,12 +393,12 @@ class TagAPIHandler extends APIHandler
 	        }
 	        else if("created_by"==$key)
 	        {
-	            $createdBy = ZCRMUser::getInstance($value["id"], $value["name"]);
+	            $createdBy = User::getInstance($value["id"], $value["name"]);
 	            $tagInstance->setCreatedBy($createdBy);
 	        }
 	        else if("modified_by"==$key)
 	        {
-	            $modifiedBy = ZCRMUser::getInstance($value["id"], $value["name"]);
+	            $modifiedBy = User::getInstance($value["id"], $value["name"]);
 	            $tagInstance->setModifiedBy($modifiedBy);
 	        }
 	        else if("created_time"==$key)

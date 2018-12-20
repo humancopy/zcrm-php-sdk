@@ -1,4 +1,5 @@
 <?php
+namespace ZCRM;
 require_once realpath(dirname(__FILE__)."/../../exception/APIExceptionHandler.php");
 require_once realpath(dirname(__FILE__)."/../../common/APIConstants.php");
 

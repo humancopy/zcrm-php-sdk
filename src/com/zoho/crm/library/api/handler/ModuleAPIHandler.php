@@ -1,20 +1,21 @@
 <?php
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMLayout.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMSection.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMField.php');
-require_once realpath(dirname(__FILE__).'/../../setup/users/ZCRMUser.php');
-require_once realpath(dirname(__FILE__).'/../../setup/users/ZCRMProfile.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMPickListValue.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMLookupField.php');
+namespace ZCRM;
+require_once realpath(dirname(__FILE__).'/../../crud/Layout.php');
+require_once realpath(dirname(__FILE__).'/../../crud/Section.php');
+require_once realpath(dirname(__FILE__).'/../../crud/Field.php');
+require_once realpath(dirname(__FILE__).'/../../setup/users/User.php');
+require_once realpath(dirname(__FILE__).'/../../setup/users/Profile.php');
+require_once realpath(dirname(__FILE__).'/../../crud/PickListValue.php');
+require_once realpath(dirname(__FILE__).'/../../crud/LookupField.php');
 require_once realpath(dirname(__FILE__).'/../../common/APIConstants.php');
 require_once 'APIHandler.php';
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMCustomView.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMCustomViewCriteria.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMCustomViewCategory.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMRelatedListProperties.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMModuleRelatedList.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMLeadConvertMapping.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMLeadConvertMappingField.php');
+require_once realpath(dirname(__FILE__).'/../../crud/CustomView.php');
+require_once realpath(dirname(__FILE__).'/../../crud/CustomViewCriteria.php');
+require_once realpath(dirname(__FILE__).'/../../crud/CustomViewCategory.php');
+require_once realpath(dirname(__FILE__).'/../../crud/RelatedListProperties.php');
+require_once realpath(dirname(__FILE__).'/../../crud/ModuleRelatedList.php');
+require_once realpath(dirname(__FILE__).'/../../crud/LeadConvertMapping.php');
+require_once realpath(dirname(__FILE__).'/../../crud/LeadConvertMappingField.php');
 require_once 'MetaDataAPIHandler.php';
 
 class ModuleAPIHandler extends APIHandler
@@ -26,7 +27,7 @@ class ModuleAPIHandler extends APIHandler
 		$this->module=$module;
 	}
 	
-	public static function getInstance(ZCRMModule $module)
+	public static function getInstance(Module $module)
 	{
 		return new ModuleAPIHandler($module);
 	}
@@ -37,7 +38,7 @@ class ModuleAPIHandler extends APIHandler
 	}
 	/**
 	 * Method to get the specified Field details
-	 * Returns api response with ZCRMField instance
+	 * Returns api response with Field instance
 	 **/
 	public function getFieldDetails($fieldId)
 	{
@@ -52,7 +53,7 @@ class ModuleAPIHandler extends APIHandler
 			$responseInstance->setData(self::getZCRMField($fieldObj));
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -60,7 +61,7 @@ class ModuleAPIHandler extends APIHandler
 	}
 	/**
 	 * Method to get all the Fields of a module
-	 * Returns api response with array of ZCRMField instances
+	 * Returns api response with array of Field instances
 	 **/
 	public function getAllFields()
 	{
@@ -78,7 +79,7 @@ class ModuleAPIHandler extends APIHandler
 				array_push($fieldInstancesArray,self::getZCRMField($fieldObj));
 			}
 			$responseInstance->setData($fieldInstancesArray);
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -88,7 +89,7 @@ class ModuleAPIHandler extends APIHandler
 	}
 	/**
 	 * Method to get all the layouts of a module
-	 * Returns api response with array of ZCRMLayout instances
+	 * Returns api response with array of Layout instances
 	 **/
 	public function getAllLayouts()
 	{
@@ -108,7 +109,7 @@ class ModuleAPIHandler extends APIHandler
 			$responseInstance->setData($layoutInstancesArray);
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -117,7 +118,7 @@ class ModuleAPIHandler extends APIHandler
 	/**
 	 * Method to get the specified layout
 	 * Input:: layout id
-	 * Returns api response with ZCRMLayout instance
+	 * Returns api response with Layout instance
 	 **/
 	public function getLayoutDetails($layoutId)
 	{
@@ -132,7 +133,7 @@ class ModuleAPIHandler extends APIHandler
 			$responseInstance->setData(self::getZCRMLayout($layoutDetails));
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -141,7 +142,7 @@ class ModuleAPIHandler extends APIHandler
 	/**
 	 * Method to get the specified custom view details
 	 * Input:: custom view id
-	 * Returns api response with ZCRMCustomView instance
+	 * Returns api response with CustomView instance
 	 **/
 	public function getCustomView($customViewId)
 	{
@@ -156,7 +157,7 @@ class ModuleAPIHandler extends APIHandler
 			
 			$responseInstance->setData(self::getZCRMCustomView($responseJSON['custom_views'][0],$categories));
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -164,7 +165,7 @@ class ModuleAPIHandler extends APIHandler
 	}
 	/**
 	 * Method to get all the custom views of a module
-	 * Returns api response with array of ZCRMCustomView instances
+	 * Returns api response with array of CustomView instances
 	 **/
 	public function getAllCustomViews()
 	{
@@ -184,7 +185,7 @@ class ModuleAPIHandler extends APIHandler
 			}
 			$responseInstance->setData($customViewInstances);
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -194,7 +195,7 @@ class ModuleAPIHandler extends APIHandler
 	
 	/**
 	 * Method to update module settings
-	 * Input:: ZCRMModule instance with the properties to get updated
+	 * Input:: Module instance with the properties to get updated
 	 * Returns api response
 	 **/
 	public function updateModuleSettings()
@@ -209,7 +210,7 @@ class ModuleAPIHandler extends APIHandler
 			$responseInstance=APIRequest::getInstance($this)->getAPIResponse();
 				
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -219,7 +220,7 @@ class ModuleAPIHandler extends APIHandler
 	
 	/**
 	 * Method to update custom view settings of a module
-	 * Input:: ZCRMCustomView instance with the properties to get updated
+	 * Input:: CustomView instance with the properties to get updated
 	 * Returns api response
 	 **/
 	public function updateCustomView($customViewInstance)
@@ -235,7 +236,7 @@ class ModuleAPIHandler extends APIHandler
 			$responseInstance=APIRequest::getInstance($this)->getAPIResponse();
 				
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -259,13 +260,13 @@ class ModuleAPIHandler extends APIHandler
 			$relatedListInstanceArray=array();
 			foreach ($relatedListArray as $relatedListObj)
 			{
-				$moduleRelatedListIns=ZCRMModuleRelatedList::getInstance($relatedListObj['api_name']);
+				$moduleRelatedListIns=ModuleRelatedList::getInstance($relatedListObj['api_name']);
 				array_push($relatedListInstanceArray,$moduleRelatedListIns->setRelatedListProperties($relatedListObj));
 			}
 			$responseInstance->setData($relatedListInstanceArray);
 				
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -287,12 +288,12 @@ class ModuleAPIHandler extends APIHandler
 			$responseJSON=$responseInstance->getResponseJSON();
 			$relatedListArray=$responseJSON['related_lists'];
 			$relatedListObj=$relatedListArray[0];
-			$moduleRelatedListIns=ZCRMModuleRelatedList::getInstance($relatedListObj['api_name']);
+			$moduleRelatedListIns=ModuleRelatedList::getInstance($relatedListObj['api_name']);
 			$moduleRelatedListIns=$moduleRelatedListIns->setRelatedListProperties($relatedListObj);
 			$responseInstance->setData($moduleRelatedListIns);
 				
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -300,13 +301,13 @@ class ModuleAPIHandler extends APIHandler
 	}
 	
 	/**
-	 * Method to process the given custom view details and set them in ZCRMCustomView instance
+	 * Method to process the given custom view details and set them in CustomView instance
 	 * Input:: custom view details as array
-	 * Returns ZCRMCustomView instance
+	 * Returns CustomView instance
 	 **/
 	public function getZCRMCustomView($customViewDetails,$categoriesArr)
 	{
-		$customViewInstance=ZCRMCustomView::getInstance($this->module->getAPIName(),$customViewDetails['id']);
+		$customViewInstance=CustomView::getInstance($this->module->getAPIName(),$customViewDetails['id']);
 		$customViewInstance->setDisplayValue($customViewDetails['display_value']);
 		$customViewInstance->setDefault((boolean)$customViewDetails['default']);
 		$customViewInstance->setName($customViewDetails['name']);
@@ -333,7 +334,7 @@ class ModuleAPIHandler extends APIHandler
 					}
 					else
 					{
-						$criteriaInstance=ZCRMCustomViewCriteria::getInstance();
+						$criteriaInstance=CustomViewCriteria::getInstance();
 						$criteriaInstance->setField($criteria['field']);
 						$criteriaInstance->setValue($criteria['value']);
 						$criteriaInstance->setComparator($criteria['comparator']);
@@ -344,7 +345,7 @@ class ModuleAPIHandler extends APIHandler
 			}
 			else
 			{
-				$criteriaInstance=ZCRMCustomViewCriteria::getInstance();
+				$criteriaInstance=CustomViewCriteria::getInstance();
 				$criteriaInstance->setField($criteriaList['field']);
 				$criteriaInstance->setValue($criteriaList['value']);
 				$criteriaInstance->setComparator($criteriaList['comparator']);
@@ -358,7 +359,7 @@ class ModuleAPIHandler extends APIHandler
 			$categoryInstanceArray=array();
 			foreach ($categoriesArr as $key=>$value)
 			{
-				$customViewCategoryIns=ZCRMCustomViewCategory::getInstance();
+				$customViewCategoryIns=CustomViewCategory::getInstance();
 				$customViewCategoryIns->setDisplayValue($value);
 				$customViewCategoryIns->setActualValue($key);
 				array_push($categoryInstanceArray,$customViewCategoryIns);
@@ -386,7 +387,7 @@ class ModuleAPIHandler extends APIHandler
 		$sectionsArray=array();
 		foreach ($allSectionDetails as $eachSection)
 		{
-			$sectionInstance=ZCRMSection::getInstance($eachSection['name']);
+			$sectionInstance=Section::getInstance($eachSection['name']);
 			
 			$sectionInstance->setDisplayName($eachSection['display_label']);
 			$sectionInstance->setColumnCount($eachSection['column_count']+0);
@@ -418,13 +419,13 @@ class ModuleAPIHandler extends APIHandler
 		return $fieldsArray;
 	}
 	/**
-	 * Method to process the given section field details and set them in ZCRMField instance
+	 * Method to process the given section field details and set them in Field instance
 	 * Input:: section field details as array
-	 * Returns ZCRMField instance
+	 * Returns Field instance
 	 **/
 	public function getZCRMFieldForSection($fieldDetails)
 	{
-		$fieldInstance=ZCRMField::getInstance($fieldDetails['api_name']);
+		$fieldInstance=Field::getInstance($fieldDetails['api_name']);
 		$fieldInstance->setSequenceNumber($fieldDetails['sequence_number']+0);
 		$fieldInstance->setMandatory((boolean)$fieldDetails['required']);
 		$fieldInstance->setDefaultValue($fieldDetails['default_value']);
@@ -440,13 +441,13 @@ class ModuleAPIHandler extends APIHandler
 		return $fieldInstance;
 	}
 	/**
-	 * Method to process the given field details and set them in ZCRMField instance
+	 * Method to process the given field details and set them in Field instance
 	 * Input:: field details as array
-	 * Returns ZCRMField instance
+	 * Returns Field instance
 	 **/
 	public function getZCRMField($fieldDetails)
 	{
-		$fieldInstance=ZCRMField::getInstance($fieldDetails['api_name']);
+		$fieldInstance=Field::getInstance($fieldDetails['api_name']);
 		$fieldInstance->setSequenceNumber(isset($fieldDetails['sequence_number'])?$fieldDetails['sequence_number']+0:0);
 		$fieldInstance->setId($fieldDetails['id']);
 		$fieldInstance->setMandatory(isset($fieldDetails['required'])?(boolean)$fieldDetails['required']:false);
@@ -568,26 +569,26 @@ class ModuleAPIHandler extends APIHandler
 		return $fieldInstance;
 	}
 	/**
-	 * Method to process the given lookup field details and set them in ZCRMLookupField instance
+	 * Method to process the given lookup field details and set them in LookupField instance
 	 * Input:: lookup field details as array
-	 * Returns ZCRMLookupField instance
+	 * Returns LookupField instance
 	 **/
 	public function getLookupFieldInstance($lookupDetails)
 	{
-		$lookupInstance=ZCRMLookupField::getInstance($lookupDetails['api_name']);
+		$lookupInstance=LookupField::getInstance($lookupDetails['api_name']);
 		$lookupInstance->setDisplayLabel($lookupDetails['display_label']);
 		$lookupInstance->setId($lookupDetails['id']);
 		$lookupInstance->setModule($lookupDetails['module']);
 		return $lookupInstance;
 	}
 	/**
-	 * Method to process the given Picklist details and set them in ZCRMPickListValue instance
+	 * Method to process the given Picklist details and set them in PickListValue instance
 	 * Input:: picklist details as array
-	 * Returns ZCRMPickListValue instance
+	 * Returns PickListValue instance
 	 **/
 	public function getPickListValueInstance($pickListDetails)
 	{
-		$pickListInstance=ZCRMPickListValue::getInstance();
+		$pickListInstance=PickListValue::getInstance();
 		$pickListInstance->setDisplayValue($pickListDetails['display_value']);
 		$pickListInstance->setActualValue($pickListDetails['actual_value']);
 		if(isset($pickListDetails['sequence_number']))
@@ -602,32 +603,32 @@ class ModuleAPIHandler extends APIHandler
 		return $pickListInstance;
 	}
 	/**
-	 * Method to process the given layout details and set them in ZCRMLayout instance
+	 * Method to process the given layout details and set them in Layout instance
 	 * Input:: layout details as array
-	 * Returns ZCRMLayout instance
+	 * Returns Layout instance
 	 **/
 	public function getZCRMLayout($layoutDetails)
 	{
-		$layoutInstance=ZCRMLayout::getInstance($layoutDetails['id']);
+		$layoutInstance=Layout::getInstance($layoutDetails['id']);
 		$layoutInstance->setCreatedTime($layoutDetails['created_time']);
 		$layoutInstance->setModifiedTime($layoutDetails['modified_time']);
 		$layoutInstance->setName($layoutDetails['name']);
 		$layoutInstance->setVisible((boolean)$layoutDetails['visible']);
 		if($layoutDetails['created_by']!=null)
 		{
-			$userInstance=ZCRMUser::getInstance((($layoutDetails['created_by']['id'])),$layoutDetails['created_by']['name']);
+			$userInstance=User::getInstance((($layoutDetails['created_by']['id'])),$layoutDetails['created_by']['name']);
 			$layoutInstance->setCreatedBy($userInstance);
 		}
 		if($layoutDetails['modified_by']!=null)
 		{
-			$userInstance=ZCRMUser::getInstance((($layoutDetails['modified_by']['id'])),$layoutDetails['modified_by']['name']);
+			$userInstance=User::getInstance((($layoutDetails['modified_by']['id'])),$layoutDetails['modified_by']['name']);
 			$layoutInstance->setModifiedBy($userInstance);
 		}
 		$accessibleProfileArray=$layoutDetails['profiles'];
 		$accessibleProfileInstances=array();
 		foreach ($accessibleProfileArray as $profile)
 		{
-			$profileInstance=ZCRMProfile::getInstance($profile['id'],$profile['name']);
+			$profileInstance=Profile::getInstance($profile['id'],$profile['name']);
 			$profileInstance->setDefaultProfile((boolean)$profile['default']);
 			array_push($accessibleProfileInstances,$profileInstance);
 		}
@@ -645,13 +646,13 @@ class ModuleAPIHandler extends APIHandler
 				if(isset($layoutDetails['convert_mapping'][$convertModule]))
 				{
 					$contactsMap=$layoutDetails['convert_mapping'][$convertModule];
-					$convertMapIns=ZCRMLeadConvertMapping::getInstance($contactsMap['name'], $contactsMap['id']);
+					$convertMapIns=LeadConvertMapping::getInstance($contactsMap['name'], $contactsMap['id']);
 					if(isset($contactsMap['fields']))
 					{
 						$fields=$contactsMap['fields'];
 						foreach ($fields as $field)
 						{
-							$convertMappingFieldIns=ZCRMLeadConvertMappingField::getInstance($field['api_name'], $field['id']);
+							$convertMappingFieldIns=LeadConvertMappingField::getInstance($field['api_name'], $field['id']);
 							$convertMappingFieldIns->setFieldLabel($field['field_label']);
 							$convertMappingFieldIns->setRequired($field['required']);
 							$convertMapIns->addFields($convertMappingFieldIns);

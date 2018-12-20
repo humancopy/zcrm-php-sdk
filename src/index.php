@@ -1,5 +1,4 @@
 <?php
-
 //all handler classes
 
 require_once 'com/zoho/crm/library/api/APIRequest.php';
@@ -15,45 +14,45 @@ require_once 'com/zoho/crm/library/api/handler/TagAPIHandler.php';
 
 
 //crud operation related
-require_once 'com/zoho/crm/library/crud/ZCRMAttachment.php';
-require_once 'com/zoho/crm/library/crud/ZCRMCustomView.php';
-require_once 'com/zoho/crm/library/crud/ZCRMCustomViewCategory.php';
-require_once 'com/zoho/crm/library/crud/ZCRMCustomViewCriteria.php';
-require_once 'com/zoho/crm/library/crud/ZCRMEventParticipant.php';
-require_once 'com/zoho/crm/library/crud/ZCRMField.php';
-require_once 'com/zoho/crm/library/crud/ZCRMInventoryLineItem.php';
-require_once 'com/zoho/crm/library/crud/ZCRMLayout.php';
-require_once 'com/zoho/crm/library/crud/ZCRMLookupField.php';
-require_once 'com/zoho/crm/library/crud/ZCRMModule.php';
-require_once 'com/zoho/crm/library/crud/ZCRMModuleRelatedList.php';
-require_once 'com/zoho/crm/library/crud/ZCRMModuleRelation.php';
-require_once 'com/zoho/crm/library/crud/ZCRMNote.php';
-require_once 'com/zoho/crm/library/crud/ZCRMPickListValue.php';
-require_once 'com/zoho/crm/library/crud/ZCRMPriceBookPricing.php';
-require_once 'com/zoho/crm/library/crud/ZCRMRecord.php';
-require_once 'com/zoho/crm/library/crud/ZCRMRelatedListProperties.php';
-require_once 'com/zoho/crm/library/crud/ZCRMSection.php';
-require_once 'com/zoho/crm/library/crud/ZCRMTax.php';
-require_once 'com/zoho/crm/library/crud/ZCRMJunctionRecord.php';
-require_once 'com/zoho/crm/library/crud/ZCRMTrashRecord.php';
-require_once 'com/zoho/crm/library/crud/ZCRMPermission.php';
-require_once 'com/zoho/crm/library/crud/ZCRMLeadConvertMapping.php';
-require_once 'com/zoho/crm/library/crud/ZCRMLeadConvertMappingField.php';
-require_once 'com/zoho/crm/library/crud/ZCRMProfileSection.php';
-require_once 'com/zoho/crm/library/crud/ZCRMProfileCategory.php';
-require_once 'com/zoho/crm/library/crud/ZCRMTag.php';
+require_once 'com/zoho/crm/library/crud/Attachment.php';
+require_once 'com/zoho/crm/library/crud/CustomView.php';
+require_once 'com/zoho/crm/library/crud/CustomViewCategory.php';
+require_once 'com/zoho/crm/library/crud/CustomViewCriteria.php';
+require_once 'com/zoho/crm/library/crud/EventParticipant.php';
+require_once 'com/zoho/crm/library/crud/Field.php';
+require_once 'com/zoho/crm/library/crud/InventoryLineItem.php';
+require_once 'com/zoho/crm/library/crud/Layout.php';
+require_once 'com/zoho/crm/library/crud/LookupField.php';
+require_once 'com/zoho/crm/library/crud/Module.php';
+require_once 'com/zoho/crm/library/crud/ModuleRelatedList.php';
+require_once 'com/zoho/crm/library/crud/ModuleRelation.php';
+require_once 'com/zoho/crm/library/crud/Note.php';
+require_once 'com/zoho/crm/library/crud/PickListValue.php';
+require_once 'com/zoho/crm/library/crud/PriceBookPricing.php';
+require_once 'com/zoho/crm/library/crud/Record.php';
+require_once 'com/zoho/crm/library/crud/RelatedListProperties.php';
+require_once 'com/zoho/crm/library/crud/Section.php';
+require_once 'com/zoho/crm/library/crud/Tax.php';
+require_once 'com/zoho/crm/library/crud/JunctionRecord.php';
+require_once 'com/zoho/crm/library/crud/TrashRecord.php';
+require_once 'com/zoho/crm/library/crud/Permission.php';
+require_once 'com/zoho/crm/library/crud/LeadConvertMapping.php';
+require_once 'com/zoho/crm/library/crud/LeadConvertMappingField.php';
+require_once 'com/zoho/crm/library/crud/ProfileSection.php';
+require_once 'com/zoho/crm/library/crud/ProfileCategory.php';
+require_once 'com/zoho/crm/library/crud/Tag.php';
 
-require_once 'com/zoho/crm/library/exception/ZCRMException.php';
+require_once 'com/zoho/crm/library/exception/Exception.php';
 
 //setup related
-require_once 'com/zoho/crm/library/setup/metadata/ZCRMOrganization.php';
-require_once 'com/zoho/crm/library/setup/restclient/ZCRMRestClient.php';
+require_once 'com/zoho/crm/library/setup/metadata/Organization.php';
+require_once 'com/zoho/crm/library/setup/restclient/RestClient.php';
 
-require_once 'com/zoho/crm/library/setup/users/ZCRMProfile.php';
-require_once 'com/zoho/crm/library/setup/users/ZCRMRole.php';
-require_once 'com/zoho/crm/library/setup/users/ZCRMUser.php';
-require_once 'com/zoho/crm/library/setup/users/ZCRMUserCustomizeInfo.php';
-require_once 'com/zoho/crm/library/setup/users/ZCRMUserTheme.php';
+require_once 'com/zoho/crm/library/setup/users/Profile.php';
+require_once 'com/zoho/crm/library/setup/users/Role.php';
+require_once 'com/zoho/crm/library/setup/users/User.php';
+require_once 'com/zoho/crm/library/setup/users/UserCustomizeInfo.php';
+require_once 'com/zoho/crm/library/setup/users/UserTheme.php';
 
 require_once 'com/zoho/crm/library/api/response/APIResponse.php';
 require_once 'com/zoho/crm/library/api/response/BulkAPIResponse.php';
@@ -64,6 +63,6 @@ require_once 'com/zoho/crm/library/api/response/ResponseInfo.php';
 
 require_once 'com/zoho/crm/library/common/APIConstants.php';
 require_once 'com/zoho/crm/library/common/CommonUtil.php';
-require_once 'com/zoho/crm/library/common/ZCRMConfigUtil.php';
+require_once 'com/zoho/crm/library/common/ConfigUtil.php';
 require_once 'com/zoho/crm/library/common/ZohoHTTPConnector.php';
 ?>

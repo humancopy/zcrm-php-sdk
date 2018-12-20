@@ -1,6 +1,7 @@
 <?php
+
 require_once realpath(dirname(__FILE__)."/../../../../../com/zoho/crm/library/api/handler/EntityAPIHandler.php");
-require_once realpath(dirname(__FILE__)."/../../../../../com/zoho/crm/library/crud/ZCRMJunctionRecord.php");
+require_once realpath(dirname(__FILE__)."/../../../../../com/zoho/crm/library/crud/JunctionRecord.php");
 require_once 'MetaDataAPIHandlerTest.php';
 require_once realpath(dirname(__FILE__)."/../common/TestUtil.php");
 
@@ -30,23 +31,23 @@ class EntityAPIHandlerTest
 		$endTime=0;
 		try{
 			Main::incrementTotalCount();
-			$parentRecord=ZCRMRecord::getInstance("Products", $productId);
-			$junctionRecord=ZCRMJunctionRecord::getInstance("Price_Books", $priceBookId);
+			$parentRecord=ZCRM\Record::getInstance("Products", $productId);
+			$junctionRecord=ZCRM\JunctionRecord::getInstance("Price_Books", $priceBookId);
 			$junctionRecord->setRelatedData("list_price", 98);
 			$responseIns=$parentRecord->addRelation($junctionRecord);
 			$endTime=microtime(true)*1000;
 			if($responseIns->getHttpStatusCode()!=APIConstants::RESPONSECODE_OK || "relation added"!=$responseIns->getMessage() || $responseIns->getCode()!=APIConstants::CODE_SUCCESS || $responseIns->getStatus()!=APIConstants::STATUS_SUCCESS || $responseIns->getDetails()['id']!=$junctionRecord->getId())
 			{
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord(Products,'.$productId.")",'addRelation(Price_Books,'.$priceBookId.")",$responseIns->getMessage(),$responseIns->getHttpStatusCode(),'failure',($endTime-$startTime));
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record(Products,'.$productId.")",'addRelation(Price_Books,'.$priceBookId.")",$responseIns->getMessage(),$responseIns->getHttpStatusCode(),'failure',($endTime-$startTime));
 				return;
 			}
 			
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord(Products,'.$productId.")",'addRelation(Price_Books,'.$priceBookId.")","Relation added successfully",$responseIns->getDetails()['id'],'success',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record(Products,'.$productId.")",'addRelation(Price_Books,'.$priceBookId.")","Relation added successfully",$responseIns->getDetails()['id'],'success',($endTime-$startTime));
 		}
-		catch (ZCRMException $e)
+		catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord(Products,'.$productId.")",'addRelation(Price_Books,'.$priceBookId.")",$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record(Products,'.$productId.")",'addRelation(Price_Books,'.$priceBookId.")",$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
 		}
 	}
 	public function testRemoveRelation()
@@ -57,29 +58,29 @@ class EntityAPIHandlerTest
 		$endTime=0;
 		try{
 			Main::incrementTotalCount();
-			$parentRecord=ZCRMRecord::getInstance("Products", $productId);
-			$junctionRecord=ZCRMJunctionRecord::getInstance("Price_Books", $priceBookId);
+			$parentRecord=ZCRM\Record::getInstance("Products", $productId);
+			$junctionRecord=ZCRM\JunctionRecord::getInstance("Price_Books", $priceBookId);
 			$responseIns=$parentRecord->removeRelation($junctionRecord);
 			$endTime=microtime(true)*1000;
 			if($responseIns->getHttpStatusCode()!=APIConstants::RESPONSECODE_OK || "relation removed"!=$responseIns->getMessage() || $responseIns->getCode()!=APIConstants::CODE_SUCCESS || $responseIns->getStatus()!=APIConstants::STATUS_SUCCESS || $responseIns->getDetails()['id']!=$junctionRecord->getId())
 			{
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord(Products,'.$productId.")",'removeRelation(Price_Books,'.$priceBookId.")",$responseIns->getMessage(),$responseIns->getHttpStatusCode(),'failure',($endTime-$startTime));
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record(Products,'.$productId.")",'removeRelation(Price_Books,'.$priceBookId.")",$responseIns->getMessage(),$responseIns->getHttpStatusCode(),'failure',($endTime-$startTime));
 				return;
 			}
 				
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord(Products,'.$productId.")",'removeRelation(Price_Books,'.$priceBookId.")","Relation added successfully",$responseIns->getDetails()['id'],'success',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record(Products,'.$productId.")",'removeRelation(Price_Books,'.$priceBookId.")","Relation added successfully",$responseIns->getDetails()['id'],'success',($endTime-$startTime));
 		}
-		catch (ZCRMException $e)
+		catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord(Products,'.$productId.")",'removeRelation(Price_Books,'.$priceBookId.")",$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record(Products,'.$productId.")",'removeRelation(Price_Books,'.$priceBookId.")",$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
 		}
 	}
 	public function testCreateRecord()
 	{
 		if(sizeof(MetaDataAPIHandlerTest::$moduleList)<=0)
 		{
-			throw new ZCRMException("No Modules fetched..");
+			throw new ZCRM\Exception("No Modules fetched..");
 		}
 		
 		$moduleList=TestUtil::moveModulePositions(true,array("Products"),MetaDataAPIHandlerTest::$moduleList);
@@ -97,10 +98,10 @@ class EntityAPIHandlerTest
 					self::$firstParnetModule=$apiName;
 				}
 				self::setRecordFieldsAndValidate($apiName,$startTime,$endTime);
-			}catch (ZCRMException $e)
+			}catch (ZCRM\Exception $e)
 			{
 				$endTime=$endTime==0?microtime(true)*1000:$endTime;
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord','create',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record','create',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
 			}
 			
 		}
@@ -110,7 +111,7 @@ class EntityAPIHandlerTest
 	{
 		if(sizeof(MetaDataAPIHandlerTest::$moduleList)<=0)
 		{
-			throw new ZCRMException("No Modules fetched..");
+			throw new ZCRM\Exception("No Modules fetched..");
 		}
 		try{
 			foreach (MetaDataAPIHandlerTest::$moduleList as $apiName=>$moduleName)
@@ -123,18 +124,18 @@ class EntityAPIHandlerTest
 						continue;
 					}
 					self::updateRecordFieldsAndValidate($apiName,$startTime,$endTime);
-				}catch (ZCRMException $e)
+				}catch (ZCRM\Exception $e)
 				{
 					$endTime=$endTime==0?microtime(true)*1000:$endTime;
-					Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord','update',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
+					Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record','update',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
 				}
 					
 			}
 		}
-		catch (ZCRMException $e)
+		catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord','update',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record','update',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
 		}
 	}
 	
@@ -142,7 +143,7 @@ class EntityAPIHandlerTest
 	{
 		if(sizeof(MetaDataAPIHandlerTest::$moduleList)<=0)
 		{
-			throw new ZCRMException("No Modules fetched..");
+			throw new ZCRM\Exception("No Modules fetched..");
 		}
 		try{
 			foreach (MetaDataAPIHandlerTest::$moduleList as $apiName=>$moduleName)
@@ -164,13 +165,13 @@ class EntityAPIHandlerTest
 					if($isValid)
 					{
 						$endTime=$endTime==0?microtime(true)*1000:$endTime;
-						Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMModule('.$apiName.")",'getRecord('.self::$moduleApiNameVsEntityId[$apiName].')',"Record fetched Successfully","EntityId::".self::$moduleApiNameVsEntityId[$apiName],'success',($endTime-$startTime));
+						Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Module('.$apiName.")",'getRecord('.self::$moduleApiNameVsEntityId[$apiName].')',"Record fetched Successfully","EntityId::".self::$moduleApiNameVsEntityId[$apiName],'success',($endTime-$startTime));
 					}
 					if($moduleName=="Notes")
 					{
 						self::getNotes($apiName,$startTime, $endTime);
 					}
-				}catch (ZCRMException $e)
+				}catch (ZCRM\Exception $e)
 				{
 					$endTime=$endTime==0?microtime(true)*1000:$endTime;
 					Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.$apiName.')','testGetRecord',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -178,7 +179,7 @@ class EntityAPIHandlerTest
 					
 			}
 		}
-		catch (ZCRMException $e)
+		catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.$apiName.')','testGetRecord',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -190,7 +191,7 @@ class EntityAPIHandlerTest
 
 		if(sizeof(MetaDataAPIHandlerTest::$moduleList)<=0)
 		{
-			throw new ZCRMException("No Modules fetched..");
+			throw new ZCRM\Exception("No Modules fetched..");
 		}
 		try{
 			$moduleList=TestUtil::moveModulePositions(true,array("Attachments","Notes"),MetaDataAPIHandlerTest::$moduleList);
@@ -219,9 +220,9 @@ class EntityAPIHandlerTest
 					if($isValid)
 					{
 						$endTime=$endTime==0?microtime(true)*1000:$endTime;
-						Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),"ZCRMRecord(".$apiName.",".self::$moduleApiNameVsEntityId[$apiName].")",'delete()',"Record Deleted Successfully","EntityId::".self::$moduleApiNameVsEntityId[$apiName],'success',($endTime-$startTime));
+						Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),"ZCRM\Record(".$apiName.",".self::$moduleApiNameVsEntityId[$apiName].")",'delete()',"Record Deleted Successfully","EntityId::".self::$moduleApiNameVsEntityId[$apiName],'success',($endTime-$startTime));
 					}
-				}catch (ZCRMException $e)
+				}catch (ZCRM\Exception $e)
 				{
 					$endTime=$endTime==0?microtime(true)*1000:$endTime;
 					Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.$apiName.')','testDeleteRecord',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -229,7 +230,7 @@ class EntityAPIHandlerTest
 					
 			}
 		}
-		catch (ZCRMException $e)
+		catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.$apiName.')','testDeleteRecord',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -244,7 +245,7 @@ class EntityAPIHandlerTest
 				$endTime=$endTime==0?microtime(true)*1000:$endTime;
 				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.$moduleAPIName.")",'validateGetRecordResponse',"Unable to process","Record creation failed so get can't be done",'failure',($endTime-$startTime));
 			}
-			$recordIns=ZCRMRecord::getInstance($moduleAPIName, self::$moduleApiNameVsEntityId[$moduleAPIName]);
+			$recordIns=ZCRM\Record::getInstance($moduleAPIName, self::$moduleApiNameVsEntityId[$moduleAPIName]);
 			$responseIns=$recordIns->delete();
 			$endTime=microtime(true)*1000;
 			if($responseIns->getHttpStatusCode()!=APIConstants::RESPONSECODE_OK || $responseIns->getMessage()!='record deleted' || $responseIns->getCode()!=APIConstants::CODE_SUCCESS || $responseIns->getStatus()!=APIConstants::STATUS_SUCCESS || $responseIns->getDetails()['id']!=$recordIns->getEntityId())
@@ -254,7 +255,7 @@ class EntityAPIHandlerTest
 			}
 			return true;
 		}
-		catch (ZCRMException $e)
+		catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.$moduleAPIName.")",'validateDeleteRecordResponse',$e->getMessage().",id:".self::$moduleApiNameVsEntityId[$moduleAPIName],$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -265,7 +266,7 @@ class EntityAPIHandlerTest
 	public function validateGetRecordResponse($moduleAPIName,$startTime,$endTime)
 	{
 		try {
-			$moduleIns=ZCRMModule::getInstance($moduleAPIName);
+			$moduleIns=ZCRM\Module::getInstance($moduleAPIName);
 			if(self::$moduleApiNameVsEntityId[$moduleAPIName]==null)
 			{
 				$endTime=$endTime==0?microtime(true)*1000:$endTime;
@@ -281,7 +282,7 @@ class EntityAPIHandlerTest
 			}
 			return true;
 		}
-		catch (ZCRMException $e)
+		catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.$moduleAPIName."),".self::$moduleApiNameVsEntityId[$moduleAPIName],'validateGetRecordResponse',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -314,7 +315,7 @@ class EntityAPIHandlerTest
 					Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.$moduleAPIName.")",'updateRecordFieldsAndValidate',"Unable to process","Record creation failed so update can't be done",'failure',($endTime-$startTime));
 					continue;
 				}
-				$zcrmrecord=ZCRMRecord::getInstance($moduleAPIName, self::$moduleApiNameVsEntityId[$moduleAPIName]);
+				$zcrmrecord=ZCRM\Record::getInstance($moduleAPIName, self::$moduleApiNameVsEntityId[$moduleAPIName]);
 				$layoutFields=MetaDataAPIHandlerTest::$moduleVsLayoutMap[$moduleAPIName][$layoutId];
 				foreach ($moduleFields as $fieldAPIName=>$fieldDetails)
 				{
@@ -419,11 +420,11 @@ class EntityAPIHandlerTest
 				if($isValid)
 				{
 					$endTime=$endTime==0?microtime(true)*1000:$endTime;
-					Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),"ZCRMRecord(".$moduleAPIName.",".self::$moduleApiNameVsEntityId[$moduleAPIName].")",'update()',"Record Updated Successfully","EntityId::".$zcrmrecord->getEntityId(),'success',($endTime-$startTime));
+					Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),"ZCRM\Record(".$moduleAPIName.",".self::$moduleApiNameVsEntityId[$moduleAPIName].")",'update()',"Record Updated Successfully","EntityId::".$zcrmrecord->getEntityId(),'success',($endTime-$startTime));
 				}
 			}
 		}
-		catch (ZCRMException $e)
+		catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.$moduleAPIName.")",'updateRecordFieldsAndValidate',$e->getMessage().",id=".self::$moduleApiNameVsEntityId[$moduleAPIName],$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -443,7 +444,7 @@ class EntityAPIHandlerTest
 			}
 			return true;
 		}
-		catch (ZCRMException $e)
+		catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.$moduleAPIName.")",'validateUpdateResponse',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -472,7 +473,7 @@ class EntityAPIHandlerTest
 			foreach ($layoutIds as $layoutId)
 			{
 				Main::incrementTotalCount();
-				$zcrmrecord=ZCRMRecord::getInstance($moduleAPIName, null);
+				$zcrmrecord=ZCRM\Record::getInstance($moduleAPIName, null);
 				$layoutFields=MetaDataAPIHandlerTest::$moduleVsLayoutMap[$moduleAPIName][$layoutId];
 				foreach ($moduleFields as $fieldAPIName=>$fieldDetails)
 				{
@@ -577,11 +578,11 @@ class EntityAPIHandlerTest
 				if($isValid)
 				{
 					$endTime=$endTime==0?microtime(true)*1000:$endTime;
-					Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord('.$moduleAPIName.")",'create',"Record Created Successfully","EntityId::".$zcrmrecord->getEntityId(),'success',($endTime-$startTime));
+					Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record('.$moduleAPIName.")",'create',"Record Created Successfully","EntityId::".$zcrmrecord->getEntityId(),'success',($endTime-$startTime));
 				}
 			}
 		}
-		catch (ZCRMException $e)
+		catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.$moduleAPIName.")",'setRecordFields',$e->getMessage().",id=".self::$moduleApiNameVsEntityId[$moduleAPIName],$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -619,7 +620,7 @@ class EntityAPIHandlerTest
 				return true;
 			}
 			
-			$zcrmModule=ZCRMModule::getInstance($moduleAPIName);
+			$zcrmModule=ZCRM\Module::getInstance($moduleAPIName);
 			$responseIns=$zcrmModule->getRecord($responseRecord->getEntityId());
 			$getRecord=$responseIns->getData();
 			$fieldKeyValueMapGET=$getRecord->getData();
@@ -638,7 +639,7 @@ class EntityAPIHandlerTest
 			return true;
 			
 		}
-		catch (ZCRMException $e)
+		catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.$moduleAPIName.")",'validateCreateResponse',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -649,7 +650,7 @@ class EntityAPIHandlerTest
 	public function uploadFile($moduleAPIName,$startTime,$endTime)
 	{
 		try{
-			$record=ZCRMRecord::getInstance(self::$firstParnetModule,self::$firstParnetId);
+			$record=ZCRM\Record::getInstance(self::$firstParnetModule,self::$firstParnetId);
 			$responseIns=$record->uploadAttachment('../../../resources/image.png');
 			$endTime=microtime(true)*1000;
 			$attchmentIns=$responseIns->getData();
@@ -660,10 +661,10 @@ class EntityAPIHandlerTest
 			else {
 				self::$moduleApiNameVsEntityId[$moduleAPIName]=$attchmentIns->getId();
 				$endTime=$endTime==0?microtime(true)*1000:$endTime;
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord('.self::$firstParnetModule.','.self::$firstParnetId.")",'uploadAttachment',"File uploaded Successfully","EntityId::".$attchmentIns->getId(),'success',($endTime-$startTime));
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record('.self::$firstParnetModule.','.self::$firstParnetId.")",'uploadAttachment',"File uploaded Successfully","EntityId::".$attchmentIns->getId(),'success',($endTime-$startTime));
 			}
 			
-		}catch (ZCRMException $e)
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'uploadFile',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -672,7 +673,7 @@ class EntityAPIHandlerTest
 		try{
 			$startTime=microtime(true)*1000;
 			Main::incrementTotalCount();
-			$record=ZCRMRecord::getInstance(self::$firstParnetModule,self::$firstParnetId);
+			$record=ZCRM\Record::getInstance(self::$firstParnetModule,self::$firstParnetId);
 			$responseIns=$record->uploadLinkAsAttachment("https://www.zoho.com");
 			$endTime=microtime(true)*1000;
 			$attchmentIns=$responseIns->getData();
@@ -682,9 +683,9 @@ class EntityAPIHandlerTest
 				return false;
 			}
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord('.self::$firstParnetModule.','.self::$firstParnetId.")",'uploadLinkAsAttachment("https://www.zoho.com")',"URL as File uploaded Successfully","EntityId::".$attchmentIns->getId(),'success',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record('.self::$firstParnetModule.','.self::$firstParnetId.")",'uploadLinkAsAttachment("https://www.zoho.com")',"URL as File uploaded Successfully","EntityId::".$attchmentIns->getId(),'success',($endTime-$startTime));
 			
-		}catch (ZCRMException $e)
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'uploadFile(ATTACHMENT_URL)',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -695,7 +696,7 @@ class EntityAPIHandlerTest
 	public function downloadFile($moduleAPIName,$startTime,$endTime)
 	{
 		try{
-			$record=ZCRMRecord::getInstance(self::$firstParnetModule,self::$firstParnetId);
+			$record=ZCRM\Record::getInstance(self::$firstParnetModule,self::$firstParnetId);
 			$responseIns=$record->downloadAttachment(self::$moduleApiNameVsEntityId[$moduleAPIName]);
 			$endTime=microtime(true)*1000;
 			if($responseIns->getHttpStatusCode()!=APIConstants::RESPONSECODE_OK || $responseIns->getFileContent()==null || $responseIns->getFileName()==null)
@@ -703,9 +704,9 @@ class EntityAPIHandlerTest
 				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'downloadFile('.self::$moduleApiNameVsEntityId[$record->getModuleApiName()].')',"File download failed",$responseIns->getMessage(),'failure',($endTime-$startTime));
 			}
 			else{
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord('.self::$firstParnetModule.','.self::$firstParnetId.")",'downloadAttachment('.self::$moduleApiNameVsEntityId[$moduleAPIName].')',"File Downloaded successfully","Attachment Id:".self::$moduleApiNameVsEntityId[$moduleAPIName],'success',($endTime-$startTime));
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record('.self::$firstParnetModule.','.self::$firstParnetId.")",'downloadAttachment('.self::$moduleApiNameVsEntityId[$moduleAPIName].')',"File Downloaded successfully","Attachment Id:".self::$moduleApiNameVsEntityId[$moduleAPIName],'success',($endTime-$startTime));
 			}
-		}catch (ZCRMException $e)
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.")",'downloadFile',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -715,7 +716,7 @@ class EntityAPIHandlerTest
 		try{
 			Main::incrementTotalCount();
 			$startTime=microtime(true)*1000;
-			$record=ZCRMRecord::getInstance(self::$firstParnetModule,self::$firstParnetId);
+			$record=ZCRM\Record::getInstance(self::$firstParnetModule,self::$firstParnetId);
 			$responseIns=$record->getAttachments();
 			$endTime=microtime(true)*1000;
 			if($responseIns->getHttpStatusCode()!=APIConstants::RESPONSECODE_OK || sizeof($responseIns->getData())==0)
@@ -724,8 +725,8 @@ class EntityAPIHandlerTest
 				return false;
 			}
 			
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord('.self::$firstParnetModule.','.self::$firstParnetId.")",'getAttachments()',"Attachments fetched successfully",'Attachments fetched='.sizeof($responseIns->getData()),'success',($endTime-$startTime));
-		}catch (ZCRMException $e)
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record('.self::$firstParnetModule.','.self::$firstParnetId.")",'getAttachments()',"Attachments fetched successfully",'Attachments fetched='.sizeof($responseIns->getData()),'success',($endTime-$startTime));
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.")",'downloadFile',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -736,7 +737,7 @@ class EntityAPIHandlerTest
 	public function deleteFile($moduleAPIName,$startTime,$endTime)
 	{
 		try{
-			$record=ZCRMRecord::getInstance(self::$firstParnetModule,self::$firstParnetId);
+			$record=ZCRM\Record::getInstance(self::$firstParnetModule,self::$firstParnetId);
 			$responseIns=$record->deleteAttachment(self::$moduleApiNameVsEntityId[$moduleAPIName]);
 			$endTime=microtime(true)*1000;
 			if($responseIns->getHttpStatusCode()!=APIConstants::RESPONSECODE_OK || $responseIns->getMessage()!='record deleted')
@@ -744,8 +745,8 @@ class EntityAPIHandlerTest
 				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'deleteFile('.self::$moduleApiNameVsEntityId[$record->getModuleApiName()].')',"File deletion failed",$responseIns->getMessage(),'failure',($endTime-$startTime));
 				return false;
 			}
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord('.self::$firstParnetModule.','.self::$firstParnetId.")",'deleteAttachment('.self::$moduleApiNameVsEntityId[$moduleAPIName].')',"File Deleted successfully","Attachment Id:".self::$moduleApiNameVsEntityId[$moduleAPIName],'success',($endTime-$startTime));
-		}catch (ZCRMException $e)
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record('.self::$firstParnetModule.','.self::$firstParnetId.")",'deleteAttachment('.self::$moduleApiNameVsEntityId[$moduleAPIName].')',"File Deleted successfully","Attachment Id:".self::$moduleApiNameVsEntityId[$moduleAPIName],'success',($endTime-$startTime));
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'deleteFile('.self::$moduleApiNameVsEntityId[$moduleAPIName].")",$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -756,8 +757,8 @@ class EntityAPIHandlerTest
 	public function createNote($moduleAPIName,$startTime,$endTime)
 	{
 		try{
-			$parentRecord=ZCRMRecord::getInstance(self::$firstParnetModule,self::$firstParnetId);
-			$noteIns=ZCRMNote::getInstance($parentRecord);
+			$parentRecord=ZCRM\Record::getInstance(self::$firstParnetModule,self::$firstParnetId);
+			$noteIns=ZCRM\Note::getInstance($parentRecord);
 			$noteIns->setContent("Sample Content");
 			$noteIns->setTitle("PHP Client Library");
 			$responseIns=$parentRecord->addNote($noteIns);
@@ -769,9 +770,9 @@ class EntityAPIHandlerTest
 				return false;
 			}
 			self::$moduleApiNameVsEntityId[$moduleAPIName]=$zcrmNote->getId();
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord('.self::$firstParnetModule.','.self::$firstParnetId.")",'addNote',"Note added Successfully","EntityId::".$zcrmNote->getId(),'success',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record('.self::$firstParnetModule.','.self::$firstParnetId.")",'addNote',"Note added Successfully","EntityId::".$zcrmNote->getId(),'success',($endTime-$startTime));
 				
-		}catch (ZCRMException $e)
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'createNote',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -787,8 +788,8 @@ class EntityAPIHandlerTest
 				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'updateNote',"Note update failed",'Reason::Note creation failed','failure',($endTime-$startTime));
 				return false;
 			}
-			$parentRecord=ZCRMRecord::getInstance(self::$firstParnetModule,self::$firstParnetId);
-			$noteIns=ZCRMNote::getInstance($parentRecord,self::$moduleApiNameVsEntityId[$moduleAPIName]);
+			$parentRecord=ZCRM\Record::getInstance(self::$firstParnetModule,self::$firstParnetId);
+			$noteIns=ZCRM\Note::getInstance($parentRecord,self::$moduleApiNameVsEntityId[$moduleAPIName]);
 			$noteIns->setContent("Sample Content1");
 			$noteIns->setTitle("PHP Client Library1");
 			$responseIns=$parentRecord->updateNote($noteIns);
@@ -798,9 +799,9 @@ class EntityAPIHandlerTest
 				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'updateNote',"Note update failed",$responseIns->getMessage(),'failure',($endTime-$startTime));
 				return false;
 			}
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord('.self::$firstParnetModule.','.self::$firstParnetId.")",'updateNote',"Note updated Successfully","EntityId::".self::$moduleApiNameVsEntityId[$moduleAPIName],'success',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record('.self::$firstParnetModule.','.self::$firstParnetId.")",'updateNote',"Note updated Successfully","EntityId::".self::$moduleApiNameVsEntityId[$moduleAPIName],'success',($endTime-$startTime));
 	
-		}catch (ZCRMException $e)
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'updateNote',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -817,7 +818,7 @@ class EntityAPIHandlerTest
 				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'getNotes',"Related Notes fetching failed",'Reason::Note creation failed','failure',0);
 				return false;
 			}
-			$parentRecord=ZCRMRecord::getInstance(self::$firstParnetModule,self::$firstParnetId);
+			$parentRecord=ZCRM\Record::getInstance(self::$firstParnetModule,self::$firstParnetId);
 			$responseIns=$parentRecord->getNotes();
 			$endTime=microtime(true)*1000;
 			if($responseIns->getHttpStatusCode()!=APIConstants::RESPONSECODE_OK ||sizeof($responseIns->getData())==0)
@@ -825,9 +826,9 @@ class EntityAPIHandlerTest
 				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'getNotes',"Related Notes fetching failed",$responseIns->getMessage(),'failure',($endTime-$startTime));
 				return false;
 			}
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord('.self::$firstParnetModule.','.self::$firstParnetId.")",'getNotes()',"Related Notes fetched Successfully","Notes Count=".sizeof($responseIns->getData()),'success',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record('.self::$firstParnetModule.','.self::$firstParnetId.")",'getNotes()',"Related Notes fetched Successfully","Notes Count=".sizeof($responseIns->getData()),'success',($endTime-$startTime));
 	
-		}catch (ZCRMException $e)
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'getNotes',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));
@@ -843,8 +844,8 @@ class EntityAPIHandlerTest
 				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'deleteNote',"Note deletion failed",'Reason::Note creation failed','failure',0);
 				return false;
 			}
-			$parentRecord=ZCRMRecord::getInstance(self::$firstParnetModule,self::$firstParnetId);
-			$noteIns=ZCRMNote::getInstance($parentRecord,self::$moduleApiNameVsEntityId[$moduleAPIName]);
+			$parentRecord=ZCRM\Record::getInstance(self::$firstParnetModule,self::$firstParnetId);
+			$noteIns=ZCRM\Note::getInstance($parentRecord,self::$moduleApiNameVsEntityId[$moduleAPIName]);
 			$responseIns=$parentRecord->deleteNote($noteIns);
 			$endTime=microtime(true)*1000;
 			if($responseIns->getHttpStatusCode()!=APIConstants::RESPONSECODE_OK ||$responseIns->getMessage()!='record deleted')
@@ -852,9 +853,9 @@ class EntityAPIHandlerTest
 				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'deleteNote',"Note deletion failed",$responseIns->getMessage(),'failure',($endTime-$startTime));
 				return false;
 			}
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRecord('.self::$firstParnetModule.','.self::$firstParnetId.")",'updateNote',"Note deleted Successfully","NoteId::".$noteIns->getId(),'success',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Record('.self::$firstParnetModule.','.self::$firstParnetId.")",'updateNote',"Note deleted Successfully","NoteId::".$noteIns->getId(),'success',($endTime-$startTime));
 	
-		}catch (ZCRMException $e)
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'EntityAPIHandlerTest('.self::$firstParnetModule.','.self::$firstParnetId.")",'deleteNote',$e->getMessage(),$e->getTraceAsString(),'failure',($endTime-$startTime));

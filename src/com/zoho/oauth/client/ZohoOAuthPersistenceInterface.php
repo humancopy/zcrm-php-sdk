@@ -1,4 +1,5 @@
 <?php
+namespace ZCRM;
 interface ZohoOAuthPersistenceInterface
 {
 	public function saveOAuthData($zohoOAuthTokens);

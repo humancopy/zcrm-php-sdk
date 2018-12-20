@@ -1,5 +1,6 @@
 <?php
-class ZohoOAuthException extends Exception
+namespace ZCRM;
+class ZohoOAuthException extends \Exception
 {
 	protected $message = 'Unknown exception';     // Exception message
     private   $string;                            // Unknown

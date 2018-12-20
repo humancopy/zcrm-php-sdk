@@ -1,21 +1,22 @@
 <?php
+namespace ZCRM;
 require_once 'EntityAPIHandler.php';
 require_once 'APIHandler.php';
-require_once realpath(dirname(__FILE__).'/../../setup/users/ZCRMUser.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMNote.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMAttachment.php');
+require_once realpath(dirname(__FILE__).'/../../setup/users/User.php');
+require_once realpath(dirname(__FILE__).'/../../crud/Note.php');
+require_once realpath(dirname(__FILE__).'/../../crud/Attachment.php');
 require_once realpath(dirname(__FILE__).'/../../common/APIConstants.php');
 
 class RelatedListAPIHandler extends APIHandler
 {
-	private $parentRecord=null;//ZCRMRecord
-	private $relatedList=null;//ZCRMModuleRelation
-	private $junctionRecord;//ZCRMJunctionRecord
+	private $parentRecord=null;//Record
+	private $relatedList=null;//ModuleRelation
+	private $junctionRecord;//JunctionRecord
 	
 	private function __construct($parentRecord,$relatedList)
 	{
 		$this->parentRecord=$parentRecord;
-		if($relatedList instanceof ZCRMModuleRelation)
+		if($relatedList instanceof ModuleRelation)
 		{
 			$this->relatedList=$relatedList;
 		}
@@ -53,7 +54,7 @@ class RelatedListAPIHandler extends APIHandler
 			$recordsList=array();
 			foreach ($records as $record)
 			{
-				$recordInstance = ZCRMRecord::getInstance($this->relatedList->getApiName(), $record["id"]);
+				$recordInstance = Record::getInstance($this->relatedList->getApiName(), $record["id"]);
 				EntityAPIHandler::getInstance($recordInstance)->setRecordProperties($record);
 				array_push($recordsList,$recordInstance);
 			}
@@ -61,7 +62,7 @@ class RelatedListAPIHandler extends APIHandler
 			$responseInstance->setData($recordsList);
 				
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -97,7 +98,7 @@ class RelatedListAPIHandler extends APIHandler
 			$responseInstance->setData($notesList);
 	
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -125,7 +126,7 @@ class RelatedListAPIHandler extends APIHandler
 			$responseInstance->setData($attachmentList);
 	
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -150,7 +151,7 @@ class RelatedListAPIHandler extends APIHandler
 			$responseInstance->setData($zcrmNote);
 		
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -174,7 +175,7 @@ class RelatedListAPIHandler extends APIHandler
 			$responseInstance->setData($zcrmNote);
 	
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -191,7 +192,7 @@ class RelatedListAPIHandler extends APIHandler
 			$responseInstance=APIRequest::getInstance($this)->getAPIResponse();
 	
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -207,10 +208,10 @@ class RelatedListAPIHandler extends APIHandler
 			$responseInstance=APIRequest::getInstance($this)->uploadFile($filePath);
 			$responseJson=$responseInstance->getResponseJSON();
 			$detailsJSON=isset($responseJson['data'][0]['details'])?$responseJson['data'][0]['details']:array();
-			$responseInstance->setData(ZCRMAttachment::getInstance($this->parentRecord,isset($detailsJSON['id'])?($detailsJSON['id']):"0"));
+			$responseInstance->setData(Attachment::getInstance($this->parentRecord,isset($detailsJSON['id'])?($detailsJSON['id']):"0"));
 		
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -227,10 +228,10 @@ class RelatedListAPIHandler extends APIHandler
 			$responseJson=$responseInstance->getResponseJSON();
 			$detailsJSON=isset($responseJson['data'][0]['details'])?$responseJson['data'][0]['details']:array();
 			
-			$responseInstance->setData(ZCRMAttachment::getInstance($this->parentRecord,isset($detailsJSON['id'])?($detailsJSON['id']):"0"));
+			$responseInstance->setData(Attachment::getInstance($this->parentRecord,isset($detailsJSON['id'])?($detailsJSON['id']):"0"));
 	
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -245,7 +246,7 @@ class RelatedListAPIHandler extends APIHandler
 		
 			return APIRequest::getInstance($this)->downloadFile();
 			
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -260,7 +261,7 @@ class RelatedListAPIHandler extends APIHandler
 	
 			return APIRequest::getInstance($this)->getAPIResponse();
 				
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -281,7 +282,7 @@ class RelatedListAPIHandler extends APIHandler
 			$this->requestBody=json_encode($inputJSON);
 			return APIRequest::getInstance($this)->getAPIResponse();
 		}
-		catch (ZCRMException $exception)
+		catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -295,7 +296,7 @@ class RelatedListAPIHandler extends APIHandler
 				
 			return APIRequest::getInstance($this)->getAPIResponse();
 		}
-		catch (ZCRMException $exception)
+		catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -316,7 +317,7 @@ class RelatedListAPIHandler extends APIHandler
 	{
 		if($noteIns==null)
 		{
-			$noteIns = ZCRMNote::getInstance($this->parentRecord, $noteDetails["id"]);
+			$noteIns = Note::getInstance($this->parentRecord, $noteDetails["id"]);
 		}
 		$noteIns->setId(isset($noteDetails["id"])?$noteDetails["id"]:null);
 		$noteIns->setTitle(isset($noteDetails["Note_Title"])?$noteDetails["Note_Title"]:null);
@@ -324,14 +325,14 @@ class RelatedListAPIHandler extends APIHandler
 		if(isset($noteDetails["Owner"]))
 		{
 			$ownerObj = $noteDetails["Owner"];
-			$ownerIns = ZCRMUser::getInstance($ownerObj["id"], $ownerObj["name"]);
+			$ownerIns = User::getInstance($ownerObj["id"], $ownerObj["name"]);
 			$noteIns->setOwner($ownerIns);
 		}
 		$createdByObj = $noteDetails["Created_By"];
-		$createdBy = ZCRMUser::getInstance($createdByObj["id"], $createdByObj["name"]);
+		$createdBy = User::getInstance($createdByObj["id"], $createdByObj["name"]);
 		$noteIns->setCreatedBy($createdBy);
 		$modifiedByObj = $noteDetails["Modified_By"];
-		$modifiedBy = ZCRMUser::getInstance($modifiedByObj["id"], $modifiedByObj["name"]);
+		$modifiedBy = User::getInstance($modifiedByObj["id"], $modifiedByObj["name"]);
 		$noteIns->setModifiedBy($modifiedBy);
 		$noteIns->setCreatedTime(isset($noteDetails["Created_Time"])?$noteDetails["Created_Time"]:null);
 		$noteIns->setModifiedTime(isset($noteDetails["Modified_Time"])?$noteDetails["Modified_Time"]:null);
@@ -374,20 +375,20 @@ class RelatedListAPIHandler extends APIHandler
 	
 	private function getZCRMAttachment($attachmentDetails)
 	{
-		$attachmentIns = ZCRMAttachment::getInstance($this->parentRecord, $attachmentDetails["id"]);
+		$attachmentIns = Attachment::getInstance($this->parentRecord, $attachmentDetails["id"]);
 		$fileName=$attachmentDetails["File_Name"];
 		$attachmentIns->setFileName($fileName);
 		//TODO - get file type from server response
 		$attachmentIns->setFileType(substr($fileName,strrpos($fileName,'.')+1,strlen($fileName)));
 		$attachmentIns->setSize($attachmentDetails['Size']);
 		$ownerObj = $attachmentDetails["Owner"];
-		$owner = ZCRMUser::getInstance($ownerObj["id"], $ownerObj["name"]);
+		$owner = User::getInstance($ownerObj["id"], $ownerObj["name"]);
 		$attachmentIns->setOwner($owner);
 		$createdByObj = $attachmentDetails["Created_By"];
-		$createdBy = ZCRMUser::getInstance($createdByObj["id"], $createdByObj["name"]);
+		$createdBy = User::getInstance($createdByObj["id"], $createdByObj["name"]);
 		$attachmentIns->setCreatedBy($createdBy);
 		$modifiedByObj = $attachmentDetails["Modified_By"];
-		$modifiedBy = ZCRMUser::getInstance($modifiedByObj["id"], $modifiedByObj["name"]);
+		$modifiedBy = User::getInstance($modifiedByObj["id"], $modifiedByObj["name"]);
 		$attachmentIns->setModifiedBy($modifiedBy);
 		$attachmentIns->setCreatedTime($attachmentDetails["Created_Time"]);
 		$attachmentIns->setModifiedTime($attachmentDetails["Modified_Time"]);

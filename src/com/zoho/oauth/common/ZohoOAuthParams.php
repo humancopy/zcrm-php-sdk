@@ -1,4 +1,5 @@
-<?php 
+<?php
+namespace ZCRM; 
 class ZohoOAuthParams
 {
 	private $clientId;

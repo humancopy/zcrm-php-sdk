@@ -1,4 +1,5 @@
 <?php
+namespace ZCRM;
 require_once 'APIResponse.php';
 require_once '../../common/APIConstants.php';
 
@@ -53,7 +54,7 @@ class OldFileAPIResponse extends APIResponse
 		try{
 			return $this->getResponse();
 		}
-		catch(ZCRMException $e)
+		catch(Exception $e)
 		{
 			throw $e;
 		}

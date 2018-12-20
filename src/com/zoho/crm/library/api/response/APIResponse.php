@@ -1,6 +1,7 @@
 <?php
+namespace ZCRM;
 require_once realpath(dirname(__FILE__)."/../../common/APIConstants.php");
-require_once realpath(dirname(__FILE__)."/../../exception/ZCRMException.php");
+require_once realpath(dirname(__FILE__)."/../../exception/Exception.php");
 require_once 'CommonAPIResponse.php';
 
 class APIResponse extends CommonAPIResponse
@@ -45,14 +46,14 @@ class APIResponse extends CommonAPIResponse
 		{
 			if($statusCode==APIConstants::RESPONSECODE_NO_CONTENT)
 			{
-				$exception=new ZCRMException(APIConstants::INVALID_DATA."-".APIConstants::INVALID_ID_MSG,$statusCode);
+				$exception=new Exception(APIConstants::INVALID_DATA."-".APIConstants::INVALID_ID_MSG,$statusCode);
 				$exception->setExceptionCode("No Content");
 				throw $exception;
 			}
 			else
 			{
 				$responseJSON=$this->getResponseJSON();
-				$exception=new ZCRMException($responseJSON['message'],$statusCode);
+				$exception=new Exception($responseJSON['message'],$statusCode);
 				$exception->setExceptionCode($responseJSON['code']);
 				$exception->setExceptionDetails($responseJSON['details']);
 				throw $exception;
@@ -87,7 +88,7 @@ class APIResponse extends CommonAPIResponse
     	}
     	if(isset($responseJSON['status']) && $responseJSON['status']==APIConstants::STATUS_ERROR)
     	{
-    		$exception=new ZCRMException($responseJSON['message'],self::getHttpStatusCode());
+    		$exception=new Exception($responseJSON['message'],self::getHttpStatusCode());
     		$exception->setExceptionCode($responseJSON['code']);
     		$exception->setExceptionDetails($responseJSON['details']);
     		throw $exception;

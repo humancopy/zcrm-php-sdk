@@ -1,4 +1,5 @@
 <?php
+namespace ZCRM;
 require_once realpath(dirname(__FILE__)."/../exception/Logger.php");
 class CommonUtil
 {

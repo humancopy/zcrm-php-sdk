@@ -1,4 +1,5 @@
 <?php
+namespace ZCRM;
 class APIConstants
 {
 	const ERROR="error";

@@ -18,7 +18,7 @@ PHP SDK is installable through `composer`. Composer is a tool for dependency man
 
 >Client app must have PHP 5.6 or above with curl extension enabled.
 Client library must be installed into client app though composer.
-The function ZCRMRestClient::initialize() must be called on startup of app.
+The function ZCRM\RestClient::initialize() must be called on startup of app.
 
 >MySQL should run in the same machine serving at the default port 3306.  
 The database name should be "zohooauth".  
@@ -130,7 +130,7 @@ Access Token from grant token:
 ------------------------------------
 The following code snippet should be executed from your main class to get access token. Please paste the copied grant token in the string literal mentioned below. This is a one-time process.
 
->ZCRMRestClient::initialize();  
+>ZCRM\RestClient::initialize();  
 $oAuthClient = ZohoOAuth::getClientInstance();  
 $grantToken = "paste_the_grant_token_here";  
 $oAuthTokens = $oAuthClient->generateAccessToken($grantToken);
@@ -140,7 +140,7 @@ Access Token from refresh token:
 ------------------------------------
 The following code snippet should be executed from your main class to get access token. Please paste the copied refresh token in the string literal mentioned below. This is a one-time process.
 
->ZCRMRestClient::initialize();  
+>ZCRM\RestClient::initialize();  
 $oAuthClient = ZohoOAuth::getClientInstance();  
 $refreshToken = "paste_the_refresh_token_here";  
 $userIdentifier = "provide_user_identifier_like_email_here";  
@@ -156,7 +156,7 @@ App Startup
 -----------
 The SDK requires the following line of code invoked every time your client app is started.
 
->ZCRMRestClient::initialize();
+>ZCRM\RestClient::initialize();
 
 Once the SDK has been initialized by the above line, you could use any APIs of the library to get proper results.
 
@@ -173,47 +173,47 @@ Through this line, you can access all the functionalities of the PHP SDK.
 
 Class Hierarchy
 ---------------
-All Zoho CRM entities are modelled as classes having properties and functions applicable to that particular entity. ZCRMRestClient is the base class of the SDK. ZCRMRestClient has functions to get instances of various other Zoho CRM entities.
+All Zoho CRM entities are modelled as classes having properties and functions applicable to that particular entity. ZCRM\RestClient is the base class of the SDK. ZCRM\RestClient has functions to get instances of various other Zoho CRM entities.
 
 The class relations and hierarchy of the library follows the entity hierarchy inside Zoho CRM. The class hierarchy of various Zoho CRM entities are given below:
 
- - ZCRMRestClient
-   - ZCRMOrganization
-     - ZCRMUser
-       - ZCRMUserTheme
-         - ZCRMUserCustomizeInfo
-       - ZCRMRole
-       - ZCRMProfile
-         - ZCRMPermission
-         - ZCRMProfileSection
-           - ZCRMProfileCategory
-     - ZCRMModule
-       - ZCRMLayout
-         - ZCRMSection
-           - ZCRMField
-           - ZCRMPickListValue
-           - ZCRMLookupField
-       	 - ZCRMLeadConvertMapping
-           - ZCRMLeadConvertMappingField
-       - ZCRMCustomView
-         - ZCRMCustomViewCategory
-         - ZCRMCustomViewCriteria
-       - ZCRMRelatedListProperties
-         - ZCRMModuleRelatedList
-       - ZCRMRecord
-       - ZCRMNote
-       - ZCRMAttachment
-       - ZCRMInventoryLineItem
-         - ZCRMTax
-       - ZCRMEventParticipant
-       - ZCRMPriceBookPricing
-       - ZCRMModuleRelation
-       - ZCRMJunctionRecord
-       - ZCRMTrashRecord
+ - ZCRM\RestClient
+   - ZCRM\Organization
+     - ZCRM\User
+       - ZCRM\UserTheme
+         - ZCRM\UserCustomizeInfo
+       - ZCRM\Role
+       - ZCRM\Profile
+         - ZCRM\Permission
+         - ZCRM\ProfileSection
+           - ZCRM\ProfileCategory
+     - ZCRM\Module
+       - ZCRM\Layout
+         - ZCRM\Section
+           - ZCRM\Field
+           - ZCRM\PickListValue
+           - ZCRM\LookupField
+       	 - ZCRM\LeadConvertMapping
+           - ZCRM\LeadConvertMappingField
+       - ZCRM\CustomView
+         - ZCRM\CustomViewCategory
+         - ZCRM\CustomViewCriteria
+       - ZCRM\RelatedListProperties
+         - ZCRM\ModuleRelatedList
+       - ZCRM\Record
+       - ZCRM\Note
+       - ZCRM\Attachment
+       - ZCRM\InventoryLineItem
+         - ZCRM\Tax
+       - ZCRM\EventParticipant
+       - ZCRM\PriceBookPricing
+       - ZCRM\ModuleRelation
+       - ZCRM\JunctionRecord
+       - ZCRM\TrashRecord
 
 Each entity class has functions to fetch its own properties and to fetch data of its immediate child entities through an API call.
 
-For example: a Zoho CRM module (ZCRMModule) object will have member functions to get a module’s properties like display name, module Id, etc, and will also have functions to fetch all its child objects (like ZCRMLayout).
+For example: a Zoho CRM module (ZCRM\Module) object will have member functions to get a module’s properties like display name, module Id, etc, and will also have functions to fetch all its child objects (like ZCRM\Layout).
 
 Instance object
 ---------------
@@ -223,13 +223,13 @@ Please note that the getInstance() function would not have any of its properties
 
 Summing it up
 -------------
-ZCRMRestClient::getModule(“Contacts”) would return the actual Contacts module, that has all the properties of the Contacts module filled through an API call.  
-ZCRMRestClient::getModuleInstance(“Contacts”) would return a dummy ZCRMModule object that would refer to the Contacts module, with no properties filled, since this doesn’t make an API call.  
-Hence, to get records from a module, it is not necessary that you need to start from ZCRMRestClient. Instead, you could get a ZCRMModule instance with ZCRMModule::getInstance() and then invoke its non-static getRecords() function from the created instance. This would avoid the API call which would have been triggered to populate the ZCRMModule object.
+ZCRM\RestClient::getModule(“Contacts”) would return the actual Contacts module, that has all the properties of the Contacts module filled through an API call.  
+ZCRM\RestClient::getModuleInstance(“Contacts”) would return a dummy ZCRM\Module object that would refer to the Contacts module, with no properties filled, since this doesn’t make an API call.  
+Hence, to get records from a module, it is not necessary that you need to start from ZCRM\RestClient. Instead, you could get a ZCRM\Module instance with ZCRM\Module::getInstance() and then invoke its non-static getRecords() function from the created instance. This would avoid the API call which would have been triggered to populate the ZCRM\Module object.
 
 Accessing record properties
 ---------------------------
-Since record properties are dynamic across modules, only the fields like createdTime, createBy, owner etc, are given as ZCRMRecord’s default properties. All other record properties are available as a map in ZCRMRecord object.
+Since record properties are dynamic across modules, only the fields like createdTime, createBy, owner etc, are given as ZCRM\Record’s default properties. All other record properties are available as a map in ZCRM\Record object.
 
 To access the individual field values of a record, use the getter and setter functions available. The keys of the record properties map are the API names of the module’s fields. All fields API names of all modules are available under Setup → Marketplace → APIs → CRM API → API Names.  
 
@@ -254,14 +254,14 @@ For example: an insert records API may partially fail because of a few records. 
 
 Exceptions
 ----------
-All unexpected behaviours like faulty API responses, library anomalies are handled by the SDK and are thrown only as a single exception - `ZCRMException`. Hence, it is enough to catch this exception alone in the client app code.
+All unexpected behaviours like faulty API responses, library anomalies are handled by the SDK and are thrown only as a single exception - `ZCRM\Exception`. Hence, it is enough to catch this exception alone in the client app code.
 
 Examples:
 ---------
 Sample Request for insert records:
 ---------------------------------
->$zcrmModuleIns = ZCRMModule::getInstance("Invoices");  
-$bulkAPIResponse=$zcrmModuleIns->createRecords($recordsArray); // $recordsArray - array of ZCRMRecord instances filled with required data for creation.  
+>$zcrmModuleIns = ZCRM\Module::getInstance("Invoices");  
+$bulkAPIResponse=$zcrmModuleIns->createRecords($recordsArray); // $recordsArray - array of ZCRM\Record instances filled with required data for creation.  
 $entityResponses = $bulkAPIResponse->getEntityResponses();  
 foreach($entityResponses as $entityResponse)  
 {  
@@ -279,16 +279,16 @@ foreach($entityResponses as $entityResponse)
 
 	Sample Invoice record instance with filled data
 	-----------------------------------------------
-$record=ZCRMRecord::getInstance("Invoices",null);  
+$record=ZCRM\Record::getInstance("Invoices",null);  
 $record->setFieldValue("Subject","Iphone sale to John");  
 $record->setFieldValue("Account_Name","410405000001016021");  
-$productInstance=ZCRMRecord::getInstance("Products",410405000001108011);  
-$lineItem=ZCRMInventoryLineItem::getInstance($productInstance);  
-$taxInstance1=ZCRMTax::getInstance("Sales Tax");  
+$productInstance=ZCRM\Record::getInstance("Products",410405000001108011);  
+$lineItem=ZCRM\InventoryLineItem::getInstance($productInstance);  
+$taxInstance1=ZCRM\Tax::getInstance("Sales Tax");  
 $taxInstance1->setPercentage(2);  
 $taxInstance1->setValue(10);  
 $lineItem->addLineTax($taxInstance1);  
-$taxInstance1=ZCRMTax::getInstance("Vat");  
+$taxInstance1=ZCRM\Tax::getInstance("Vat");  
 $taxInstance1->setPercentage(12);  
 $taxInstance1->setValue(60);  
 $lineItem->addLineTax($taxInstance1);  
@@ -299,8 +299,8 @@ $record->addLineItem($lineItem);
 
 Sample Request to fetch records:
 --------------------------------
->$zcrmModuleIns = ZCRMModule::getInstance("Contacts");  
+>$zcrmModuleIns = ZCRM\Module::getInstance("Contacts");  
 $bulkAPIResponse=$zcrmModuleIns->getRecords();  
-$recordsArray = $bulkAPIResponse->getData(); // $recordsArray - array of ZCRMRecord instances  
+$recordsArray = $bulkAPIResponse->getData(); // $recordsArray - array of ZCRM\Record instances  
 
 For more APIs, please refer [this link](https://www.zoho.com/crm/help/api/v2/#api-reference)

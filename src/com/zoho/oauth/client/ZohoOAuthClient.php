@@ -1,4 +1,5 @@
 <?php
+namespace ZCRM;
 
 require_once 'ZohoOAuth.php';
 require_once realpath(dirname(__FILE__)."/../common/OAuthLogger.php");

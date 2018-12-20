@@ -1,17 +1,18 @@
 <?php
-require_once realpath(dirname(__FILE__)."/../common/ZCRMConfigUtil.php");
+namespace ZCRM;
+require_once realpath(dirname(__FILE__)."/../common/ConfigUtil.php");
 class Logger
 {
 	public static function writeToFile($msg)
 	{
-		set_include_path(ZCRMConfigUtil::getConfigValue('applicationLogFilePath'));
+		set_include_path(ConfigUtil::getConfigValue('applicationLogFilePath'));
 		$path=get_include_path();
 		if($path{strlen($path)-1}!='\/')
 		{
 			$path=$path."/";
 		}
 		$path=str_replace("\n", "", $path);
-		$filePointer=fopen($path."ZCRMClientLibrary.log","a");
+		$filePointer=fopen($path."ClientLibrary.log","a");
 		if(!$filePointer)
 		{
 			return;

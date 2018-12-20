@@ -1,4 +1,5 @@
 <?php
+namespace ZCRM;
 require_once 'OAuthLogger.php';
 class ZohoOAuthUtil
 {

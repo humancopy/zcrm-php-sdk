@@ -1,9 +1,10 @@
 <?php
+namespace ZCRM;
 require_once realpath(dirname(__FILE__)."/../../common/APIConstants.php");
 require_once 'ResponseInfo.php';
 require_once 'EntityResponse.php';
 require_once 'CommonAPIResponse.php';
-require_once realpath(dirname(__FILE__)."/../../exception/ZCRMException.php");
+require_once realpath(dirname(__FILE__)."/../../exception/Exception.php");
 
 class BulkAPIResponse extends CommonAPIResponse
 {
@@ -26,14 +27,14 @@ class BulkAPIResponse extends CommonAPIResponse
 		{
 			if($statusCode==APIConstants::RESPONSECODE_NO_CONTENT)
 			{
-				$exception=new ZCRMException("No Content",$statusCode);
+				$exception=new Exception("No Content",$statusCode);
 				$exception->setExceptionCode("NO CONTENT");
 				throw $exception;
 			}
 			else
 			{
 				$responseJSON=$this->getResponseJSON();
-				$exception=new ZCRMException($responseJSON['message'],$statusCode);
+				$exception=new Exception($responseJSON['message'],$statusCode);
 				$exception->setExceptionCode($responseJSON['code']);
 				$exception->setExceptionDetails($responseJSON['details']);
 				throw $exception;

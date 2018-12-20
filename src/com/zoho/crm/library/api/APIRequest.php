@@ -1,8 +1,9 @@
 <?php
-require_once realpath(dirname(__FILE__)."/../common/ZCRMConfigUtil.php");
+namespace ZCRM;
+require_once realpath(dirname(__FILE__)."/../common/ConfigUtil.php");
 require_once realpath(dirname(__FILE__)."/../common/ZohoHTTPConnector.php");
 require_once realpath(dirname(__FILE__)."/../common/APIConstants.php");
-require_once realpath(dirname(__FILE__)."/../exception/ZCRMException.php");
+require_once realpath(dirname(__FILE__)."/../exception/Exception.php");
 require_once 'response/APIResponse.php';
 require_once 'response/BulkAPIResponse.php';
 require_once realpath(dirname(__FILE__)."/response/FileAPIResponse.php");
@@ -46,9 +47,9 @@ class APIRequest
 	 */
 	public function constructAPIUrl()
 	{
-		$hitSandbox=ZCRMConfigUtil::getConfigValue('sandbox');
-		$baseUrl=strcasecmp($hitSandbox, "true")==0?str_replace('www','sandbox',ZCRMConfigUtil::getAPIBaseUrl()):ZCRMConfigUtil::getAPIBaseUrl();
-		$this->url=$baseUrl."/crm/".ZCRMConfigUtil::getAPIVersion()."/";
+		$hitSandbox=ConfigUtil::getConfigValue('sandbox');
+		$baseUrl=strcasecmp($hitSandbox, "true")==0?str_replace('www','sandbox',ConfigUtil::getAPIBaseUrl()):ConfigUtil::getAPIBaseUrl();
+		$this->url=$baseUrl."/crm/".ConfigUtil::getAPIVersion()."/";
 		$this->url=str_replace(PHP_EOL, '', $this->url);
 	}
 	
@@ -56,9 +57,9 @@ class APIRequest
 	private function authenticateRequest()
 	{
 		try{
-			$accessToken= (new ZCRMConfigUtil())->getAccessToken();
+			$accessToken= (new ConfigUtil())->getAccessToken();
 			$this->requestHeaders[APIConstants::AUTHORIZATION]=APIConstants::OAUTH_HEADER_PREFIX.$accessToken;
-		}catch (ZCRMException $ex)
+		}catch (Exception $ex)
 		{
 			throw $ex;
 		}
@@ -83,7 +84,7 @@ class APIRequest
 			$this->responseInfo=$response[1];
 			return new APIResponse($this->response,$this->responseInfo['http_code']);
 		}
-		catch (ZCRMException $e)
+		catch (Exception $e)
 		{
 			throw $e;
 		}
@@ -110,7 +111,7 @@ class APIRequest
 			$this->responseInfo=$response[1];
 			return new BulkAPIResponse($this->response,$this->responseInfo['http_code']);
 		}
-		catch (ZCRMException $e)
+		catch (Exception $e)
 		{
 			throw $e;
 		}
@@ -142,7 +143,7 @@ class APIRequest
 			$this->responseInfo=$response[1];
 			return new APIResponse($this->response,$this->responseInfo['http_code']);
 		}
-		catch (ZCRMException $e)
+		catch (Exception $e)
 		{
 			throw $e;
 		}
@@ -164,7 +165,7 @@ class APIRequest
 			$this->responseInfo=$response[1];
 			return new APIResponse($this->response,$this->responseInfo['http_code']);
 		}
-		catch (ZCRMException $e)
+		catch (Exception $e)
 		{
 			throw $e;
 		}
@@ -181,7 +182,7 @@ class APIRequest
 			$connector->setRequestType($this->requestMethod);
 			$response=$connector->downloadFile();
 			return (new FileAPIResponse())->setFileContent($response[0],$response[1]['http_code']);
-		}catch (ZCRMException $e)
+		}catch (Exception $e)
 		{
 			throw $e;
 		}

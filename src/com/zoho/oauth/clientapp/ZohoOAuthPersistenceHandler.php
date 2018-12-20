@@ -1,4 +1,5 @@
 <?php
+namespace ZCRM;
 require_once realpath(dirname(__FILE__)."/../client/ZohoOAuthPersistenceInterface.php");
 require_once realpath(dirname(__FILE__)."/../common/ZohoOAuthException.php");
 require_once realpath(dirname(__FILE__)."/../common/OAuthLogger.php");

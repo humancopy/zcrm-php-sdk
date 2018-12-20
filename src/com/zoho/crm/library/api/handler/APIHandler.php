@@ -1,4 +1,5 @@
 <?php
+namespace ZCRM;
 require_once 'APIHandlerInterface.php';
 
 class APIHandler implements APIHandlerInterface

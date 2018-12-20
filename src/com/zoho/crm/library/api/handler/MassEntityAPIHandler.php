@@ -1,6 +1,7 @@
 <?php
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMRecord.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMTrashRecord.php');
+namespace ZCRM;
+require_once realpath(dirname(__FILE__).'/../../crud/Record.php');
+require_once realpath(dirname(__FILE__).'/../../crud/TrashRecord.php');
 require_once 'EntityAPIHandler.php';
 require_once 'APIHandler.php';
 
@@ -21,7 +22,7 @@ class MassEntityAPIHandler extends APIHandler
 	{
 		if(sizeof($records) > 100)
 		{
-			throw new ZCRMException(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
+			throw new Exception(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
 		}
 		try{
 			$this->urlPath=$this->module->getAPIName();
@@ -37,7 +38,7 @@ class MassEntityAPIHandler extends APIHandler
 				}
 				else
 				{
-					throw new ZCRMException("Entity ID MUST be null for create operation.",APIConstants::RESPONSECODE_BAD_REQUEST);
+					throw new Exception("Entity ID MUST be null for create operation.",APIConstants::RESPONSECODE_BAD_REQUEST);
 				}
 			}
 			$requestBodyObj["data"]=$dataArray;
@@ -71,7 +72,7 @@ class MassEntityAPIHandler extends APIHandler
 			}
 			$bulkAPIResponse->setData($createdRecords);
 			return $bulkAPIResponse;
-		}catch (ZCRMException $e){
+		}catch (Exception $e){
 			throw $e;
 		}
 	}
@@ -80,7 +81,7 @@ class MassEntityAPIHandler extends APIHandler
 	{
 		if(sizeof($records) > 100)
 		{
-			throw new ZCRMException(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
+			throw new Exception(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
 		}
 		try{
 			$this->urlPath=$this->module->getAPIName()."/upsert";
@@ -124,7 +125,7 @@ class MassEntityAPIHandler extends APIHandler
 			}
 			$bulkAPIResponse->setData($upsertRecords);
 			return $bulkAPIResponse;
-		}catch (ZCRMException $e){
+		}catch (Exception $e){
 			throw $e;
 		}
 	}
@@ -133,7 +134,7 @@ class MassEntityAPIHandler extends APIHandler
 	{
 		if(sizeof($records) > 100)
 		{
-			throw new ZCRMException(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
+			throw new Exception(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
 		}
 		try{
 			$this->urlPath=$this->module->getAPIName();
@@ -181,7 +182,7 @@ class MassEntityAPIHandler extends APIHandler
 			}
 			$bulkAPIResponse->setData($upsertRecords);
 			return $bulkAPIResponse;
-			}catch (ZCRMException $e){
+			}catch (Exception $e){
 			throw $e;
 		}
 		}
@@ -190,7 +191,7 @@ class MassEntityAPIHandler extends APIHandler
 	{
 		if(sizeof($entityIds) > 100)
 		{
-			throw new ZCRMException(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
+			throw new Exception(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
 		}
 		try
 		{
@@ -207,11 +208,11 @@ class MassEntityAPIHandler extends APIHandler
 			{
 				$responseData = $entityResIns->getResponseJSON();
 				$responseJSON = $responseData["details"];
-				$record = ZCRMRecord::getInstance($this->module->getAPIName(), $responseJSON["id"]);
+				$record = Record::getInstance($this->module->getAPIName(), $responseJSON["id"]);
 				$entityResIns->setData($record);
 			}
 			return $bulkAPIResponse;
-		}catch(ZCRMException $exception)
+		}catch(Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -247,7 +248,7 @@ class MassEntityAPIHandler extends APIHandler
 			$trashRecordList=array();
 			foreach ($trashRecords as $trashRecord)
 			{
-				$trashRecordInstance = ZCRMTrashRecord::getInstance($trashRecord['type'],$trashRecord['id']);
+				$trashRecordInstance = TrashRecord::getInstance($trashRecord['type'],$trashRecord['id']);
 				self::setTrashRecordProperties($trashRecordInstance,$trashRecord);
 				array_push($trashRecordList,$trashRecordInstance);
 			}
@@ -256,7 +257,7 @@ class MassEntityAPIHandler extends APIHandler
 				
 			return $responseInstance;
 		}
-		catch (ZCRMException $exception)
+		catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -272,13 +273,13 @@ class MassEntityAPIHandler extends APIHandler
 		if($recordProperties['created_by']!=null)
 		{
 			$createdBy=$recordProperties['created_by'];
-			$createdBy_User=ZCRMUser::getInstance($createdBy['id'], $createdBy['name']);
+			$createdBy_User=User::getInstance($createdBy['id'], $createdBy['name']);
 			$trashRecordInstance->setCreatedBy($createdBy_User);
 		}
 		if($recordProperties['deleted_by']!=null)
 		{
 			$deletedBy=$recordProperties['deleted_by'];
-			$deletedBy_User=ZCRMUser::getInstance($deletedBy['id'], $deletedBy['name']);
+			$deletedBy_User=User::getInstance($deletedBy['id'], $deletedBy['name']);
 			$trashRecordInstance->setDeletedBy($deletedBy_User);
 		}
 		$trashRecordInstance->setDeletedTime($recordProperties['deleted_time']);
@@ -318,7 +319,7 @@ class MassEntityAPIHandler extends APIHandler
 			$recordsList=array();
 			foreach ($records as $record)
 			{
-				$recordInstance = ZCRMRecord::getInstance($this->module->getAPIName(), $record["id"]);
+				$recordInstance = Record::getInstance($this->module->getAPIName(), $record["id"]);
 				EntityAPIHandler::getInstance($recordInstance)->setRecordProperties($record);
 				array_push($recordsList,$recordInstance);
 			}
@@ -326,7 +327,7 @@ class MassEntityAPIHandler extends APIHandler
 			$responseInstance->setData($recordsList);
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -362,7 +363,7 @@ class MassEntityAPIHandler extends APIHandler
 			$recordsList=array();
 			foreach ($records as $record)
 			{
-				$recordInstance = ZCRMRecord::getInstance($this->module->getAPIName(), $record["id"]);
+				$recordInstance = Record::getInstance($this->module->getAPIName(), $record["id"]);
 				EntityAPIHandler::getInstance($recordInstance)->setRecordProperties($record);
 				array_push($recordsList,$recordInstance);
 			}
@@ -370,7 +371,7 @@ class MassEntityAPIHandler extends APIHandler
 			$responseInstance->setData($recordsList);
 				
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -381,7 +382,7 @@ class MassEntityAPIHandler extends APIHandler
 	{
 		if(sizeof($idList)>100)
 		{
-			throw new ZCRMException(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
+			throw new Exception(APIConstants::API_MAX_RECORDS_MSG,APIConstants::RESPONSECODE_BAD_REQUEST);
 		}
 		try{
 			$inputJSON=self::constructJSONForMassUpdate($idList,$apiName,$value);
@@ -403,7 +404,7 @@ class MassEntityAPIHandler extends APIHandler
 					$responseData = $entityResIns->getResponseJSON();
 					$recordJSON = $responseData["details"];
 					
-					$updatedRecord = ZCRMRecord::getInstance($this->module->getAPIName(), $recordJSON["id"]);
+					$updatedRecord = Record::getInstance($this->module->getAPIName(), $recordJSON["id"]);
 					EntityAPIHandler::getInstance($updatedRecord)->setRecordProperties($recordJSON);
 					array_push($updatedRecords,$updatedRecord);
 					$entityResIns->setData($updatedRecord);
@@ -416,7 +417,7 @@ class MassEntityAPIHandler extends APIHandler
 			$bulkAPIResponse->setData($updatedRecords);
 				
 			return $bulkAPIResponse;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;

@@ -1,4 +1,5 @@
 <?php
+namespace ZCRM;
 interface APIHandlerInterface
 {
 	public function getRequestMethod();

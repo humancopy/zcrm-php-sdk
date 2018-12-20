@@ -1,5 +1,5 @@
 <?php
-require_once realpath(dirname(__FILE__).'/../../../../com/zoho/crm/library/setup/restclient/ZCRMRestClient.php');
+require_once realpath(dirname(__FILE__).'/../../../../com/zoho/crm/library/setup/restclient/RestClient.php');
 require_once './api/MetaDataAPIHandlerTest.php';
 require_once './api/EntityAPIHandlerTest.php';
 require_once './api/ModuleAPIHandlerTest.php';
@@ -18,7 +18,7 @@ class Main
 	public function startAutomation()
 	{
 		try{
-			ZCRMRestClient::initialize();
+			ZCRM\RestClient::initialize();
 			/*$oAuthCli = ZohoOAuth::getClientInstance();
 			$grantToken = "1000.e8d1903e61ed8db6450e0199368af7bb.2d2333746dd2cf58be68154c67477ec5";
 			$oAuthTokens = $oAuthCli->generateAccessToken($grantToken);

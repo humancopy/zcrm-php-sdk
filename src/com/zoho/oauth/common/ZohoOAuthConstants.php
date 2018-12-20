@@ -1,4 +1,5 @@
 <?php
+namespace ZCRM;
 class ZohoOAuthConstants
 {
 	const IAM_URL="accounts_url";

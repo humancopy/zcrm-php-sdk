@@ -1,4 +1,5 @@
 <?php
+namespace ZCRM;
 class OAuthLogger
 {
 	public static function writeToFile($msg)

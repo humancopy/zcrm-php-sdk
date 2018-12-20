@@ -1,16 +1,17 @@
 <?php
+namespace ZCRM;
 require_once 'APIHandler.php';
 require_once 'ModuleAPIHandler.php';
 require_once realpath(dirname(__FILE__).'/../../common/APIConstants.php');
 require_once realpath(dirname(__FILE__).'/../../common/ZohoHTTPConnector.php');
 require_once realpath(dirname(__FILE__).'/../../api/APIRequest.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMModule.php');
-require_once realpath(dirname(__FILE__).'/../../setup/users/ZCRMUser.php');
-require_once realpath(dirname(__FILE__).'/../../setup/users/ZCRMProfile.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMModuleRelatedList.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMRelatedListProperties.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMCustomView.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMCustomViewCriteria.php');
+require_once realpath(dirname(__FILE__).'/../../crud/Module.php');
+require_once realpath(dirname(__FILE__).'/../../setup/users/User.php');
+require_once realpath(dirname(__FILE__).'/../../setup/users/Profile.php');
+require_once realpath(dirname(__FILE__).'/../../crud/ModuleRelatedList.php');
+require_once realpath(dirname(__FILE__).'/../../crud/RelatedListProperties.php');
+require_once realpath(dirname(__FILE__).'/../../crud/CustomView.php');
+require_once realpath(dirname(__FILE__).'/../../crud/CustomViewCriteria.php');
 
 class MetaDataAPIHandler extends APIHandler
 {
@@ -42,7 +43,7 @@ class MetaDataAPIHandler extends APIHandler
 			$responseInstance->setData($responseData);
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -60,7 +61,7 @@ class MetaDataAPIHandler extends APIHandler
 			$moduleArray=$responseInstance->getResponseJSON()['modules'];
 			$responseInstance->setData(self::getZCRMModule($moduleArray[0]));
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -69,7 +70,7 @@ class MetaDataAPIHandler extends APIHandler
 	
 	public function getZCRMModule($moduleDetails)
 	{
-		$crmModuleInstance=ZCRMModule::getInstance($moduleDetails[APIConstants::API_NAME]);
+		$crmModuleInstance=Module::getInstance($moduleDetails[APIConstants::API_NAME]);
 		$crmModuleInstance->setViewable($moduleDetails['viewable']);
 		$crmModuleInstance->setCreatable($moduleDetails['creatable']);
 		$crmModuleInstance->setConvertable($moduleDetails['convertable']);
@@ -97,7 +98,7 @@ class MetaDataAPIHandler extends APIHandler
 		$zcrmUserInstance=null;
 		if($moduleDetails['modified_by']!=null)
 		{
-			$zcrmUserInstance=ZCRMUser::getInstance(($moduleDetails['modified_by']["id"]),$moduleDetails['modified_by']["name"]);
+			$zcrmUserInstance=User::getInstance(($moduleDetails['modified_by']["id"]),$moduleDetails['modified_by']["name"]);
 		}
 		$crmModuleInstance->setModifiedBy($zcrmUserInstance);
 		$crmModuleInstance->setCustomModule('custom'===$moduleDetails['generated_type']);
@@ -111,7 +112,7 @@ class MetaDataAPIHandler extends APIHandler
 		$profileInstanceArray=array();
 		foreach ($profileArray as $eachProfile)
 		{
-			array_push($profileInstanceArray,ZCRMProfile::getInstance($eachProfile['id'],$eachProfile['name']));
+			array_push($profileInstanceArray,Profile::getInstance($eachProfile['id'],$eachProfile['name']));
 		}
 		$crmModuleInstance->setAllProfiles($profileInstanceArray);
 		
@@ -126,19 +127,19 @@ class MetaDataAPIHandler extends APIHandler
 			$relatedListInstanceArray=array();
 			foreach ($relatedListArray as $relatedListObj)
 			{
-				$moduleRelatedListIns=ZCRMModuleRelatedList::getInstance($relatedListObj['api_name']);
+				$moduleRelatedListIns=ModuleRelatedList::getInstance($relatedListObj['api_name']);
 				array_push($relatedListInstanceArray,$moduleRelatedListIns->setRelatedListProperties($relatedListObj));
 			}
 		}
 		$crmModuleInstance->setRelatedLists($relatedListInstanceArray);
 		if(array_key_exists("layouts",$moduleDetails))
 		{
-			$crmModuleInstance->setLayouts(ModuleAPIHandler::getInstance(ZCRMModule::getInstance($moduleDetails[APIConstants::API_NAME]))->getLayouts($moduleDetails['layouts']));
+			$crmModuleInstance->setLayouts(ModuleAPIHandler::getInstance(Module::getInstance($moduleDetails[APIConstants::API_NAME]))->getLayouts($moduleDetails['layouts']));
 		}
 		
 		if(array_key_exists("fields",$moduleDetails) && $moduleDetails['fields']!=null)
 		{
-			$crmModuleInstance->setFields(ModuleAPIHandler::getInstance(ZCRMModule::getInstance($moduleDetails[APIConstants::API_NAME]))->getFields($moduleDetails['fields']));
+			$crmModuleInstance->setFields(ModuleAPIHandler::getInstance(Module::getInstance($moduleDetails[APIConstants::API_NAME]))->getFields($moduleDetails['fields']));
 		}
 		
 		if(array_key_exists("related_list_properties",$moduleDetails) && $moduleDetails['related_list_properties']!=null)
@@ -175,7 +176,7 @@ class MetaDataAPIHandler extends APIHandler
 	}
 	public function getModuleDefaultCustomView($moduleAPIName,$customViewDetails)
 	{
-		$customViewInstance=ZCRMCustomView::getInstance($moduleAPIName,$customViewDetails['id']);
+		$customViewInstance=CustomView::getInstance($moduleAPIName,$customViewDetails['id']);
 		$customViewInstance->setDisplayValue($customViewDetails['display_value']);
 		$customViewInstance->setDefault((boolean)$customViewDetails['default']);
 		$customViewInstance->setName($customViewDetails['name']);
@@ -201,7 +202,7 @@ class MetaDataAPIHandler extends APIHandler
 					}
 					else 
 					{
-						$criteriaInstance=ZCRMCustomViewCriteria::getInstance();
+						$criteriaInstance=CustomViewCriteria::getInstance();
 						$criteriaInstance->setField($criteria['field']);
 						$criteriaInstance->setValue($criteria['value']);
 						$criteriaInstance->setComparator($criteria['comparator']);
@@ -212,7 +213,7 @@ class MetaDataAPIHandler extends APIHandler
 			}
 			else
 			{
-				$criteriaInstance=ZCRMCustomViewCriteria::getInstance();
+				$criteriaInstance=CustomViewCriteria::getInstance();
 				$criteriaInstance->setField($criteriaList['field']);
 				$criteriaInstance->setValue($criteriaList['value']);
 				$criteriaInstance->setComparator($criteriaList['comparator']);
@@ -231,7 +232,7 @@ class MetaDataAPIHandler extends APIHandler
 	}
 	public function getRelatedListProperties($relatedListProperties)
 	{
-		$relatedListPropInstance=ZCRMRelatedListProperties::getInstance();
+		$relatedListPropInstance=RelatedListProperties::getInstance();
 		$relatedListPropInstance->setSortBy(array_key_exists("sort_by", $relatedListProperties)?$relatedListProperties['sort_by']:null);
 		$relatedListPropInstance->setSortOrder(array_key_exists("sort_order", $relatedListProperties)?$relatedListProperties['sort_order']:null);
 		$relatedListPropInstance->setFields(array_key_exists("fields", $relatedListProperties)?$relatedListProperties['fields']:null);

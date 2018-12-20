@@ -1,6 +1,7 @@
 <?php
+namespace ZCRM;
 require_once realpath(dirname(__FILE__)."/../../common/APIConstants.php");
-require_once realpath(dirname(__FILE__)."/../../exception/ZCRMException.php");
+require_once realpath(dirname(__FILE__)."/../../exception/Exception.php");
 
 class FileAPIResponse
 {
@@ -20,7 +21,7 @@ class FileAPIResponse
 		{
 			$this->responseJSON=array();
 			$this->responseHeaders=array();
-			$exception=new ZCRMException(APIConstants::INVALID_ID_MSG,$httpStatusCode);
+			$exception=new Exception(APIConstants::INVALID_ID_MSG,$httpStatusCode);
 			$exception->setExceptionCode("No Content");
 			throw $exception;
 		}
@@ -39,7 +40,7 @@ class FileAPIResponse
 		{
 			$content=json_decode($content,true);
 			$this->responseJSON=$content;
-			$exception=new ZCRMException($content['message'],$httpStatusCode);
+			$exception=new Exception($content['message'],$httpStatusCode);
 			$exception->setExceptionCode($content['code']);
 			$exception->setExceptionDetails($content['details']);
 			throw $exception;

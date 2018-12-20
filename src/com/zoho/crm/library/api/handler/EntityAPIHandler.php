@@ -1,14 +1,15 @@
 <?php
+namespace ZCRM;
 
 require_once 'APIHandler.php';
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMInventoryLineItem.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMRecord.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMTax.php');
+require_once realpath(dirname(__FILE__).'/../../crud/InventoryLineItem.php');
+require_once realpath(dirname(__FILE__).'/../../crud/Record.php');
+require_once realpath(dirname(__FILE__).'/../../crud/Tax.php');
 require_once realpath(dirname(__FILE__).'/../../exception/APIExceptionHandler.php');
 require_once realpath(dirname(__FILE__).'/../../common/APIConstants.php');
 require_once realpath(dirname(__FILE__).'/../APIRequest.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMPriceBookPricing.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMEventParticipant.php');
+require_once realpath(dirname(__FILE__).'/../../crud/PriceBookPricing.php');
+require_once realpath(dirname(__FILE__).'/../../crud/EventParticipant.php');
 
 class EntityAPIHandler extends APIHandler
 {
@@ -35,7 +36,7 @@ class EntityAPIHandler extends APIHandler
 			self::setRecordProperties($recordDetails[0]);
 			$responseInstance->setData($this->record);
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -57,12 +58,12 @@ class EntityAPIHandler extends APIHandler
 			$this->record->setEntityId($reponseDetails['id']);
 			$this->record->setCreatedTime($reponseDetails['Created_Time']);
 			$createdBy=$reponseDetails['Created_By'];
-			$this->record->setCreatedBy(ZCRMUser::getInstance($createdBy['id'],$createdBy['name']));
+			$this->record->setCreatedBy(User::getInstance($createdBy['id'],$createdBy['name']));
 			
 			$responseInstance->setData($this->record);
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -86,14 +87,14 @@ class EntityAPIHandler extends APIHandler
 			$this->record->setCreatedTime($reponseDetails['Created_Time']);
 			$this->record->setModifiedTime($reponseDetails['Modified_Time']);
 			$createdBy=$reponseDetails['Created_By'];
-			$this->record->setCreatedBy(ZCRMUser::getInstance($createdBy['id'],$createdBy['name']));
+			$this->record->setCreatedBy(User::getInstance($createdBy['id'],$createdBy['name']));
 			$modifiedBy=$reponseDetails['Modified_By'];
-			$this->record->setModifiedBy(ZCRMUser::getInstance($modifiedBy['id'],$modifiedBy['name']));
+			$this->record->setModifiedBy(User::getInstance($modifiedBy['id'],$modifiedBy['name']));
 			
 			$responseInstance->setData($this->record);
 				
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -110,7 +111,7 @@ class EntityAPIHandler extends APIHandler
 			$responseInstance=APIRequest::getInstance($this)->getAPIResponse();
 	
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -161,7 +162,7 @@ class EntityAPIHandler extends APIHandler
 			}
 			
 			return $convertedIds;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -189,7 +190,7 @@ class EntityAPIHandler extends APIHandler
 			
 			return $responseInstance;
 			
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -202,7 +203,7 @@ class EntityAPIHandler extends APIHandler
 			$this->urlPath=$this->record->getModuleApiName()."/".$this->record->getEntityId()."/photo";
 				
 			return APIRequest::getInstance($this)->downloadFile();
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -216,7 +217,7 @@ class EntityAPIHandler extends APIHandler
 			$this->urlPath=$this->record->getModuleApiName()."/".$this->record->getEntityId()."/photo";
 	
 			return APIRequest::getInstance($this)->getAPIResponse();
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -237,11 +238,11 @@ class EntityAPIHandler extends APIHandler
 		}
 		foreach ($apiNameVsValues as $key=>$value)
 		{
-			if($value instanceof ZCRMRecord)
+			if($value instanceof Record)
 			{
 				$value = "".$value->getEntityId();
 			}
-			else if($value instanceof ZCRMUser)
+			else if($value instanceof User)
 			{
 				$value = "". $value->getId();
 			}
@@ -286,7 +287,7 @@ class EntityAPIHandler extends APIHandler
 		}
 		return $priceDetailsArr;
 	}
-	public function getZCRMPriceDetailAsJSON(ZCRMPriceBookPricing $priceDetailIns)
+	public function getZCRMPriceDetailAsJSON(PriceBookPricing $priceDetailIns)
 	{
 		$priceDetailJSON = array();
 		if ($priceDetailIns->getId() != null)
@@ -310,7 +311,7 @@ class EntityAPIHandler extends APIHandler
 		return $participantsArr;
 	}
 	
-	public function getZCRMParticipantAsJSON(ZCRMEventParticipant $participantIns)
+	public function getZCRMParticipantAsJSON(EventParticipant $participantIns)
 	{
 		$participantJSON = array();
 		$participantJSON["participant"]= "".$participantIns->getId();
@@ -331,7 +332,7 @@ class EntityAPIHandler extends APIHandler
 			$lineItemData=array();
 			if($lineItem->getQuantity()==null)
 			{
-				throw new ZCRMException("Mandatory Field 'quantity' is missing.",APIConstants::RESPONSECODE_BAD_REQUEST);
+				throw new Exception("Mandatory Field 'quantity' is missing.",APIConstants::RESPONSECODE_BAD_REQUEST);
 			}
 			if($lineItem->getId()!=null)
 			{
@@ -401,12 +402,12 @@ class EntityAPIHandler extends APIHandler
 			}
 			else if("Created_By"==$key)
 			{
-				$createdBy = ZCRMUser::getInstance($value["id"], $value["name"]);
+				$createdBy = User::getInstance($value["id"], $value["name"]);
 				$this->record->setCreatedBy($createdBy);
 			}
 			else if("Modified_By"==$key)
 			{
-				$modifiedBy = ZCRMUser::getInstance($value["id"], $value["name"]);
+				$modifiedBy = User::getInstance($value["id"], $value["name"]);
 				$this->record->setModifiedBy($modifiedBy);
 			}
 			else if("Created_Time"==$key)
@@ -423,7 +424,7 @@ class EntityAPIHandler extends APIHandler
 			}
 			else if("Owner"==$key)
 			{
-				$owner =ZCRMUser::getInstance($value["id"], $value["name"]);
+				$owner =User::getInstance($value["id"], $value["name"]);
 				$this->record->setOwner($owner);
 			}
 			else if("Layout"==$key)
@@ -431,21 +432,21 @@ class EntityAPIHandler extends APIHandler
 				$layout = null;
 				if($value!=null)
 				{
-					$layout = ZCRMLayout::getInstance($value["id"]);
+					$layout = Layout::getInstance($value["id"]);
 					$layout->setName($value["name"]);
 				}
 				$this->record->setLayout($layout);
 			}
 			else if("Handler"==$key && $value!=null)
 			{
-				$handler = ZCRMUser::getInstance($value["id"], $value["name"]);
+				$handler = User::getInstance($value["id"], $value["name"]);
 				$this->record->setFieldValue($key, $handler);
 			}
 			else if ("Tax"===$key && is_array($value))
 			{
 				foreach ($value as $taxName)
 				{
-					$taxIns=ZCRMTax::getInstance($taxName);
+					$taxIns=Tax::getInstance($taxName);
 					$this->record->addTax($taxIns);
 				}
 			}
@@ -457,7 +458,7 @@ class EntityAPIHandler extends APIHandler
 			{
 				if(isset($value["id"]))
 				{
-					$lookupRecord = ZCRMRecord::getInstance($key, isset($value["id"])?$value["id"]:"0");
+					$lookupRecord = Record::getInstance($key, isset($value["id"])?$value["id"]:"0");
 					$lookupRecord->setLookupLabel(isset($value["name"])?$value["name"]:null);
 					$this->record->setFieldValue($key, $lookupRecord);
 				}
@@ -493,7 +494,7 @@ class EntityAPIHandler extends APIHandler
 	
 	public function getZCRMParticipant($participantDetail)
 	{
-		$participant = ZCRMEventParticipant::getInstance($participantDetail['type'],$participantDetail['participant']);
+		$participant = EventParticipant::getInstance($participantDetail['type'],$participantDetail['participant']);
 		$participant->setName($participantDetail["name"]);
 		$participant->setEmail($participantDetail["Email"]);
 		$participant->setInvited((boolean)$participantDetail["invited"]);
@@ -504,7 +505,7 @@ class EntityAPIHandler extends APIHandler
 	
 	public function getZCRMPriceDetail($priceDetails)
 	{
-		$priceDetailIns = ZCRMPriceBookPricing::getInstance($priceDetails["id"]);
+		$priceDetailIns = PriceBookPricing::getInstance($priceDetails["id"]);
 		$priceDetailIns->setDiscount((double)$priceDetails["discount"]);
 		$priceDetailIns->setToRange((double)$priceDetails["to_range"]);
 		$priceDetailIns->setFromRange((double)$priceDetails["from_range"]);
@@ -524,8 +525,8 @@ class EntityAPIHandler extends APIHandler
 	{
 		$productDetails = $lineItemDetails["product"];
 		$lineItemId = $lineItemDetails["id"];
-		$lineItemInstance = ZCRMInventoryLineItem::getInstance($lineItemId);
-		$product = ZCRMRecord::getInstance("Products", $productDetails["id"]);
+		$lineItemInstance = InventoryLineItem::getInstance($lineItemId);
+		$product = Record::getInstance("Products", $productDetails["id"]);
 		$product->setLookupLabel($productDetails["name"]);
 		if(isset($productDetails['Product_Code']))
 		{
@@ -542,7 +543,7 @@ class EntityAPIHandler extends APIHandler
 		$lineTaxes = $lineItemDetails["line_tax"];
 		foreach($lineTaxes as $lineTax)
 		{
-			$taxInstance=ZCRMTax::getInstance($lineTax["name"]);
+			$taxInstance=Tax::getInstance($lineTax["name"]);
 			$taxInstance->setPercentage($lineTax['percentage']);
 			$taxInstance->setValue($lineTax['value']+0);
 			$lineItemInstance->addLineTax($taxInstance);

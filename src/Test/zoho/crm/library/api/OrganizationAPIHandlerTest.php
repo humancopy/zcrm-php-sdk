@@ -1,4 +1,5 @@
 <?php
+
 require_once realpath(dirname(__FILE__)."/../Main.php");
 require_once realpath(dirname(__FILE__)."/../common/Helper.php");
 class OrganizationAPIHandlerTest
@@ -34,20 +35,20 @@ class OrganizationAPIHandlerTest
 			Main::incrementTotalCount();
 			$startTime=microtime(true)*1000;
 			$endTime=0;
-			$restIns=ZCRMRestClient::getInstance();
+			$restIns=ZCRM\RestClient::getInstance();
 			$responseInstance=$restIns->getOrganizationDetails();
 			$zcrmOrganization=$responseInstance->getData();
 			$endTime=microtime(true)*1000;
 			if($zcrmOrganization->getOrgId()==null || $zcrmOrganization->getCompanyName()==null || $zcrmOrganization->getPrimaryEmail()==null || $zcrmOrganization->getPrimaryZuid()==null || $zcrmOrganization->getZgid()==null || $zcrmOrganization->getTimeZone()==null || $zcrmOrganization->getCurrencyLocale()==null || $zcrmOrganization->getCountry()==null|| $zcrmOrganization->getCity()==null ||$zcrmOrganization->getStreet()==null||$zcrmOrganization->getState()==null||$zcrmOrganization->getFax()==null||$zcrmOrganization->getEmployeeCount()==null || $zcrmOrganization->getPhone()==null||$zcrmOrganization->getMobile()==null||$zcrmOrganization->getZipCode()==null||$zcrmOrganization->getWebSite()==null||$zcrmOrganization->getCurrencySymbol()==null ||$zcrmOrganization->getCountryCode()==null||$zcrmOrganization->getIsoCode()==null)
 			{
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRestClient','getOrganizationDetails',"Invalid Response","Org details not fetched properly",'failure',($endTime-$startTime));
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\RestClient','getOrganizationDetails',"Invalid Response","Org details not fetched properly",'failure',($endTime-$startTime));
 				return;
 			}
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRestClient','getOrganizationDetails',"Org Details Fetched Successfully!!",null,'success',($endTime-$startTime));
-		}catch (ZCRMException $e)
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\RestClient','getOrganizationDetails',"Org Details Fetched Successfully!!",null,'success',($endTime-$startTime));
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMRestClient','getOrganizationDetails',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\RestClient','getOrganizationDetails',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
 		}
 	}
 	
@@ -57,19 +58,19 @@ class OrganizationAPIHandlerTest
 			Main::incrementTotalCount();
 			$startTime=microtime(true)*1000;
 			$endTime=0;
-			$orgIns=ZCRMOrganization::getInstance();
+			$orgIns=ZCRM\Organization::getInstance();
 			$responseInstance=$orgIns->getAllProfiles();
 			$zcrmProfiles=$responseInstance->getData();
 			$endTime=microtime(true)*1000;
 			if($zcrmProfiles==null || sizeof($zcrmProfiles)<=0)
 			{
-				throw new ZCRMException("No Profile Received");
+				throw new ZCRM\Exception("No Profile Received");
 			}
 			foreach ($zcrmProfiles as $zcrmProfile)
 			{
 				if($zcrmProfile->getId()==null || $zcrmProfile->getName()==null)
 				{
-					throw new ZCRMException("Invalid Profile Data Received (Either ID or Name is NULL)");
+					throw new ZCRM\Exception("Invalid Profile Data Received (Either ID or Name is NULL)");
 				}
 				if('Administrator'===$zcrmProfile->getName())
 				{
@@ -77,11 +78,11 @@ class OrganizationAPIHandlerTest
 				}
 				array_push(self::$profileIdList,$zcrmProfile->getId());
 			}
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getAllProfiles',null,null,'success',($endTime-$startTime));
-		}catch (ZCRMException $e)
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getAllProfiles',null,null,'success',($endTime-$startTime));
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getAllProfiles',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getAllProfiles',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
 		}
 	}
 	
@@ -91,19 +92,19 @@ class OrganizationAPIHandlerTest
 			Main::incrementTotalCount();
 			$startTime=microtime(true)*1000;
 			$endTime=0;
-			$orgIns=ZCRMOrganization::getInstance();
+			$orgIns=ZCRM\Organization::getInstance();
 			$responseInstance=$orgIns->getAllRoles();
 			$zcrmRoles=$responseInstance->getData();
 			$endTime=microtime(true)*1000;
 			if($zcrmRoles==null || sizeof($zcrmRoles)<=0)
 			{
-				throw new ZCRMException("No Role Received");
+				throw new ZCRM\Exception("No Role Received");
 			}
 			foreach ($zcrmRoles as $zcrmRole)
 			{
 				if($zcrmRole->getId()==null || $zcrmRole->getName()==null || $zcrmRole->getDisplayLabel()==null || ($zcrmRole->getReportingTo()!=null && ($zcrmRole->getReportingTo()->getId()==null || $zcrmRole->getReportingTo()->getName()==null)))
 				{
-					throw new ZCRMException("Invalid Role Data Received (Either ID or Name or Label or reportingTo is NULL)");
+					throw new ZCRM\Exception("Invalid Role Data Received (Either ID or Name or Label or reportingTo is NULL)");
 				}
 				if($zcrmRole->isAdminRole())
 				{
@@ -111,11 +112,11 @@ class OrganizationAPIHandlerTest
 				}
 				array_push(self::$roleIdList,$zcrmRole->getId());
 			}
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getAllRoles',null,null,'success',($endTime-$startTime));
-		}catch (ZCRMException $e)
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getAllRoles',null,null,'success',($endTime-$startTime));
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getAllRoles',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getAllRoles',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
 		}
 	}
 	
@@ -123,10 +124,10 @@ class OrganizationAPIHandlerTest
 	{
 		if(sizeof(self::$roleIdList)<=0)
 		{
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getRole','Invalid Response','Roles List is null or empty','failure',0);
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getRole','Invalid Response','Roles List is null or empty','failure',0);
 			return;
 		}
-		$orgIns=ZCRMOrganization::getInstance();
+		$orgIns=ZCRM\Organization::getInstance();
 		foreach (self::$roleIdList as $roleId)
 		{
 			try{
@@ -138,13 +139,13 @@ class OrganizationAPIHandlerTest
 				$zcrmRole=$responseInstance->getData();
 				if($zcrmRole->getId()==null || $zcrmRole->getName()==null || $zcrmRole->getDisplayLabel()==null || ($zcrmRole->getReportingTo()!=null && ($zcrmRole->getReportingTo()->getId()==null || $zcrmRole->getReportingTo()->getName()==null)))
 				{
-					throw new ZCRMException("Invalid Role Data Received (Either ID or Name or Label or Reporting To is NULL)");
+					throw new ZCRM\Exception("Invalid Role Data Received (Either ID or Name or Label or Reporting To is NULL)");
 				}
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getRole('.$roleId.')',null,null,'success',($endTime-$startTime));
-			}catch (ZCRMException $e)
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getRole('.$roleId.')',null,null,'success',($endTime-$startTime));
+			}catch (ZCRM\Exception $e)
 			{
 				$endTime=$endTime==0?microtime(true)*1000:$endTime;
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getRole('.$roleId.')',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getRole('.$roleId.')',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
 			}
 		}
 	}
@@ -153,10 +154,10 @@ class OrganizationAPIHandlerTest
 	{
 		if(sizeof(self::$profileIdList)<=0)
 		{
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getProfile','Invalid Response','Profile List is null or empty','failure',0);
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getProfile','Invalid Response','Profile List is null or empty','failure',0);
 			return;
 		}
-		$orgIns=ZCRMOrganization::getInstance();
+		$orgIns=ZCRM\Organization::getInstance();
 		foreach (self::$profileIdList as $profileId)
 		{
 			try{
@@ -168,7 +169,7 @@ class OrganizationAPIHandlerTest
 				$zcrmProfile=$responseInstance->getData();
 				if($zcrmProfile->getId()==null || $zcrmProfile->getName()==null) 
 				{
-					throw new ZCRMException("Invalid Profile Data Received (Either ID or Name is NULL)");
+					throw new ZCRM\Exception("Invalid Profile Data Received (Either ID or Name is NULL)");
 				}
 				else if(sizeof($zcrmProfile->getPermissionList())>0)
 				{
@@ -177,7 +178,7 @@ class OrganizationAPIHandlerTest
 					{
 						if($permissionIns->getId()==null || $permissionIns->getName()==null)
 						{
-							throw new ZCRMException("Invalid Profile Data Received (Either Profile Permission ID or Permission Name is NULL)");
+							throw new ZCRM\Exception("Invalid Profile Data Received (Either Profile Permission ID or Permission Name is NULL)");
 						}
 					}
 				}
@@ -188,7 +189,7 @@ class OrganizationAPIHandlerTest
 					{
 						if($sectionIns->getName()==null)
 						{
-							throw new ZCRMException("Invalid Profile Data Received (Permission Name is not fetched)");
+							throw new ZCRM\Exception("Invalid Profile Data Received (Permission Name is not fetched)");
 						}
 						else if(sizeof($sectionIns->getCategories())>0)
 						{
@@ -197,17 +198,17 @@ class OrganizationAPIHandlerTest
 							{
 								if($categoryIns->getName()==null || $categoryIns->getDisplayLabel()==null || $categoryIns->getPermissionIds()==null)
 								{
-									throw new ZCRMException("Invalid Profile Data Received (Profile Section Category Details not fetched properly)");
+									throw new ZCRM\Exception("Invalid Profile Data Received (Profile Section Category Details not fetched properly)");
 								}
 							}
 						}
 					}
 				}
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getProfile('.$profileId.')',null,null,'success',($endTime-$startTime));
-			}catch (ZCRMException $e)
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getProfile('.$profileId.')',null,null,'success',($endTime-$startTime));
+			}catch (ZCRM\Exception $e)
 			{
 				$endTime=$endTime==0?microtime(true)*1000:$endTime;
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getProfile('.$profileId.')',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getProfile('.$profileId.')',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
 			}
 		}
 	}
@@ -218,19 +219,19 @@ class OrganizationAPIHandlerTest
 			Main::incrementTotalCount();
 			$startTime=microtime(true)*1000;
 			$endTime=0;
-			$orgIns=ZCRMOrganization::getInstance();
+			$orgIns=ZCRM\Organization::getInstance();
 			$responseInstance=$orgIns->getAllUsers();
 			$zcrmUsers=$responseInstance->getData();
 			$endTime=microtime(true)*1000;
 			if($zcrmUsers==null || sizeof($zcrmUsers)<=0)
 			{
-				throw new ZCRMException("No user Received");
+				throw new ZCRM\Exception("No user Received");
 			}
 			foreach ($zcrmUsers as $zcrmUser)
 			{
 				if($zcrmUser->getEmail()==null || $zcrmUser->getId()==null || $zcrmUser->getLastName()==null || $zcrmUser->getRole()==null || $zcrmUser->getProfile()==null ||  $zcrmUser->getLanguage()==null|| $zcrmUser->getLocale()==null || $zcrmUser->getDateFormat()==null|| $zcrmUser->getTimeFormat()==null|| $zcrmUser->getStatus()==null)
 				{
-					throw new ZCRMException("Invalid User Data Received");
+					throw new ZCRM\Exception("Invalid User Data Received");
 				}
 				$userDetails=array();
 				$userDetails['id']=$zcrmUser->getId();
@@ -247,11 +248,11 @@ class OrganizationAPIHandlerTest
 				array_push(self::$userIdList,$zcrmUser->getId());
 			}
 			
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getAllUsers',null,null,'success',($endTime-$startTime));
-		}catch (ZCRMException $e)
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getAllUsers',null,null,'success',($endTime-$startTime));
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getAllUsers',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getAllUsers',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
 		}
 	}
 	
@@ -259,10 +260,10 @@ class OrganizationAPIHandlerTest
 	{
 		if(sizeof(self::$userIdList)<=0)
 		{
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getUser','Invalid Response','User List is null or empty','failure',0);
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getUser','Invalid Response','User List is null or empty','failure',0);
 			return;
 		}
-		$orgIns=ZCRMOrganization::getInstance();
+		$orgIns=ZCRM\Organization::getInstance();
 		foreach (self::$userIdList as $userId)
 		{
 			try{
@@ -274,13 +275,13 @@ class OrganizationAPIHandlerTest
 				$zcrmUser=$responseInstance->getData();
 				if($zcrmUser->getEmail()==null || $zcrmUser->getId()==null || $zcrmUser->getLastName()==null || $zcrmUser->getRole()==null || $zcrmUser->getProfile()==null ||  $zcrmUser->getLanguage()==null|| $zcrmUser->getLocale()==null || $zcrmUser->getDateFormat()==null|| $zcrmUser->getTimeFormat()==null|| $zcrmUser->getStatus()==null)
 				{
-					throw new ZCRMException("Invalid User Data Received (like ID, Email, LastName, Profile, Role,..) is NULL)");
+					throw new ZCRM\Exception("Invalid User Data Received (like ID, Email, LastName, Profile, Role,..) is NULL)");
 				}
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getUser('.$userId.')',null,null,'success',($endTime-$startTime));
-			}catch (ZCRMException $e)
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getUser('.$userId.')',null,null,'success',($endTime-$startTime));
+			}catch (ZCRM\Exception $e)
 			{
 				$endTime=$endTime==0?microtime(true)*1000:$endTime;
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','getUser('.$userId.')',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','getUser('.$userId.')',$e->getMessage(),$e->getExceptionDetails(),'failure',($endTime-$startTime));
 			}
 		}
 	}
@@ -292,24 +293,24 @@ class OrganizationAPIHandlerTest
 		$zcrmUser=null;
 		foreach ($nameArr as $name)
 		{
-			$zcrmUser=ZCRMUser::getInstance(null, $name);
+			$zcrmUser=ZCRM\User::getInstance(null, $name);
 			$zcrmUser->setLastName($name);
 			$zcrmUser->setEmail("sumanth.chilka+".$name."@zohocorp.com");
-			$zcrmUser->setRole(ZCRMRole::getInstance(self::$adminRoleId, null));
-			$zcrmUser->setProfile(ZCRMProfile::getInstance(self::$adminProfileId, null));
+			$zcrmUser->setRole(ZCRM\Role::getInstance(self::$adminRoleId, null));
+			$zcrmUser->setProfile(ZCRM\Profile::getInstance(self::$adminProfileId, null));
 			array_push($userJSONArray,$zcrmUser);
 		}
 		$startTime=microtime(true)*1000;
 		$endTime=0;
 		try{
 			Main::incrementTotalCount();
-			$orgIns=ZCRMOrganization::getInstance();
+			$orgIns=ZCRM\Organization::getInstance();
 			$responseIns=$orgIns->createUser($zcrmUser);
 			$endTime=microtime(true)*1000;
 			$responseJSON=$responseIns->getResponseJSON()['users'][0];
 			if($responseIns->getHttpStatusCode()!=APIConstants::RESPONSECODE_OK || !($responseJSON['code']=='DUPLICATE_DATA'||$responseJSON['code']=='SUCCESS'))
 			{
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','createUsers','Invalid Response','Response message is '.$responseIns->getMessage(),'failure',($endTime-$startTime));
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','createUsers','Invalid Response','Response message is '.$responseIns->getMessage(),'failure',($endTime-$startTime));
 				return ;
 			}
 			$userDetails=$responseJSON['details'];
@@ -321,7 +322,7 @@ class OrganizationAPIHandlerTest
 			{
 				if($userData->getId()==null || $userData->getProfile()->getId()!=$zcrmUser->getProfile()->getId() || $userData->getRole()->getId()!=$zcrmUser->getRole()->getId() || $userData->getLastName()!=$zcrmUser->getLastName() || $userData->getEmail()!=$zcrmUser->getEmail())
 				{
-					Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','createUsers','Invalid User details received','User Details mismatched with created user details '.$responseIns->getMessage(),'failure',($endTime-$startTime));
+					Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','createUsers','Invalid User details received','User Details mismatched with created user details '.$responseIns->getMessage(),'failure',($endTime-$startTime));
 					return;
 				}
 			}
@@ -329,20 +330,20 @@ class OrganizationAPIHandlerTest
 			{
 				if($userData->getId()==null || $userData->getEmail()!=$zcrmUser->getEmail())
 				{
-					Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','createUsers','Invalid response','Invalid response for duplicate user creation'.$responseIns->getMessage(),'failure',($endTime-$startTime));
+					Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','createUsers','Invalid response','Invalid response for duplicate user creation'.$responseIns->getMessage(),'failure',($endTime-$startTime));
 					return;
 				}
 			}
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','createUsers',null,null,'success',($endTime-$startTime));
-		}catch (ZCRMException $e)
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','createUsers',null,null,'success',($endTime-$startTime));
+		}catch (ZCRM\Exception $e)
 		{
 			$endTime=$endTime==0?microtime(true)*1000:$endTime;
 			if("Failed to add user since same email id is already present"==$e->getMessage())
 			{
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','createUsers',null,null,'success',($endTime-$startTime));
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','createUsers',null,null,'success',($endTime-$startTime));
 				return;
 			}
-			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization','createUsers',$e->getMessage().",CODE=".$e->getExceptionCode(),$e->getCode().",".json_encode($e->getExceptionDetails()),'failure',($endTime-$startTime));
+			Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization','createUsers',$e->getMessage().",CODE=".$e->getExceptionCode(),$e->getCode().",".json_encode($e->getExceptionDetails()),'failure',($endTime-$startTime));
 		}
 	}
 	
@@ -355,29 +356,29 @@ class OrganizationAPIHandlerTest
 				Main::incrementTotalCount();
 				$startTime=microtime(true)*1000;
 				$endTime=0;
-				$orgIns=ZCRMOrganization::getInstance();
+				$orgIns=ZCRM\Organization::getInstance();
 				$methodName=self::$userTypeVsMethod[$type];
 				$responseInstance=$orgIns->$methodName();
 				$zcrmUsers=$responseInstance->getData();
 				$endTime=microtime(true)*1000;
 				if($zcrmUsers==null)
 				{
-					throw new ZCRMException("No user Received");
+					throw new ZCRM\Exception("No user Received");
 				}
 				foreach ($zcrmUsers as $zcrmUser)
 				{
 					if($zcrmUser->getEmail()==null || $zcrmUser->getId()==null || $zcrmUser->getLastName()==null || $zcrmUser->getRole()==null || $zcrmUser->getProfile()==null ||  $zcrmUser->getLanguage()==null|| $zcrmUser->getLocale()==null || $zcrmUser->getDateFormat()==null|| $zcrmUser->getTimeFormat()==null|| $zcrmUser->getStatus()==null)
 					{
-						throw new ZCRMException("Invalid User Data Received");
+						throw new ZCRM\Exception("Invalid User Data Received");
 					}
 					self::validateUser($zcrmUser, $type);
 				}
 			
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization',$methodName,null,null,'success',($endTime-$startTime));
-			}catch (ZCRMException $e)
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization',$methodName,null,null,'success',($endTime-$startTime));
+			}catch (ZCRM\Exception $e)
 			{
 				$endTime=$endTime==0?microtime(true)*1000:$endTime;
-				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRMOrganization',$methodName,$e->getMessage().",CODE=".$e->getExceptionCode(),$e->getCode().",".json_encode($e->getExceptionDetails()),'failure',($endTime-$startTime));
+				Helper::writeToFile(self::$filePointer,Main::getCurrentCount(),'ZCRM\Organization',$methodName,$e->getMessage().",CODE=".$e->getExceptionCode(),$e->getCode().",".json_encode($e->getExceptionDetails()),'failure',($endTime-$startTime));
 			}
 		}
 	}
@@ -386,35 +387,35 @@ class OrganizationAPIHandlerTest
 	{
 		if($type=="ActiveUsers" && $zcrmUser->getStatus()!="active")
 		{
-			throw new ZCRMException("Invalid User fetched");
+			throw new ZCRM\Exception("Invalid User fetched");
 		}
 		else if($type=="DeactiveUsers" && $zcrmUser->getStatus()!='disabled')
 		{
-			throw new ZCRMException("Invalid User fetched");
+			throw new ZCRM\Exception("Invalid User fetched");
 		}
 		else if($type=="ConfirmedUsers" && !$zcrmUser->isConfirm())
 		{
-			throw new ZCRMException("Invalid User fetched");
+			throw new ZCRM\Exception("Invalid User fetched");
 		}
 		else if($type=="NotConfirmedUsers" && $zcrmUser->isConfirm())
 		{
-			throw new ZCRMException("Invalid User fetched");
+			throw new ZCRM\Exception("Invalid User fetched");
 		}
 		else if($type=="DeletedUsers" && $zcrmUser->getStatus()!='deleted')
 		{
-			throw new ZCRMException("Invalid User fetched");
+			throw new ZCRM\Exception("Invalid User fetched");
 		}
 		else if($type=="ActiveConfirmedUsers" && ($zcrmUser->getStatus()!="active" || !$zcrmUser->isConfirm()))
 		{
-			throw new ZCRMException("Invalid User fetched");
+			throw new ZCRM\Exception("Invalid User fetched");
 		}
 		else if($type=="AdminUsers" && $zcrmUser->getProfile()->getId()!=self::$adminProfileId)
 		{
-			throw new ZCRMException("Invalid User fetched");
+			throw new ZCRM\Exception("Invalid User fetched");
 		}
 		else if($type=="ActiveConfirmedAdmins" && ($zcrmUser->getStatus()!="active" || !$zcrmUser->isConfirm() || $zcrmUser->getProfile()->getId()!=self::$adminProfileId))
 		{
-			throw new ZCRMException("Invalid User fetched");
+			throw new ZCRM\Exception("Invalid User fetched");
 		}
 	}
 }

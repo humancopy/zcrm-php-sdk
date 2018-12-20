@@ -1,13 +1,14 @@
 <?php
-require_once realpath(dirname(__FILE__).'/../../setup/users/ZCRMUser.php');
-require_once realpath(dirname(__FILE__).'/../../setup/users/ZCRMUserCustomizeInfo.php');
-require_once realpath(dirname(__FILE__).'/../../setup/users/ZCRMUserTheme.php');
-require_once realpath(dirname(__FILE__).'/../../setup/users/ZCRMRole.php');
-require_once realpath(dirname(__FILE__).'/../../setup/users/ZCRMProfile.php');
-require_once realpath(dirname(__FILE__).'/../../exception/ZCRMException.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMPermission.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMProfileSection.php');
-require_once realpath(dirname(__FILE__).'/../../crud/ZCRMProfileCategory.php');
+namespace ZCRM;
+require_once realpath(dirname(__FILE__).'/../../setup/users/User.php');
+require_once realpath(dirname(__FILE__).'/../../setup/users/UserCustomizeInfo.php');
+require_once realpath(dirname(__FILE__).'/../../setup/users/UserTheme.php');
+require_once realpath(dirname(__FILE__).'/../../setup/users/Role.php');
+require_once realpath(dirname(__FILE__).'/../../setup/users/Profile.php');
+require_once realpath(dirname(__FILE__).'/../../exception/Exception.php');
+require_once realpath(dirname(__FILE__).'/../../crud/Permission.php');
+require_once realpath(dirname(__FILE__).'/../../crud/ProfileSection.php');
+require_once realpath(dirname(__FILE__).'/../../crud/ProfileCategory.php');
 /**
  * 
  * Purpose of this class is to fire User level APIs and construct the response
@@ -38,7 +39,7 @@ class OrganizationAPIHandler extends APIHandler
 			$responseInstance->setData(self::setOrganizationDetails($orgDetails));
 				
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -47,7 +48,7 @@ class OrganizationAPIHandler extends APIHandler
 	
 	public function setOrganizationDetails($orgDetails)
 	{
-		$orgInsatance=ZCRMOrganization::getInstance($orgDetails['company_name'], $orgDetails['id']);
+		$orgInsatance=Organization::getInstance($orgDetails['company_name'], $orgDetails['id']);
 		$orgInsatance->setAlias($orgDetails['alias']);
 		$orgInsatance->setCity($orgDetails['city']);
 		$orgInsatance->setCountry($orgDetails['country']);
@@ -101,7 +102,7 @@ class OrganizationAPIHandler extends APIHandler
 			$responseInstance->setData($roleInstanceArray);
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -119,7 +120,7 @@ class OrganizationAPIHandler extends APIHandler
 			$responseInstance->setData(self::getZCRMRole($roles[0]));
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -128,12 +129,12 @@ class OrganizationAPIHandler extends APIHandler
 	
 	public function getZCRMRole($roleDetails)
 	{
-		$crmRoleInstance=ZCRMRole::getInstance($roleDetails['id'],$roleDetails['name']);
+		$crmRoleInstance=Role::getInstance($roleDetails['id'],$roleDetails['name']);
 		$crmRoleInstance->setDisplayLabel($roleDetails['display_label']);
 		$crmRoleInstance->setAdminRole((boolean)$roleDetails['admin_user']);
 		if(isset($roleDetails['reporting_to']))
 		{
-			$crmRoleInstance->setReportingTo(ZCRMUser::getInstance($roleDetails['reporting_to']['id'],$roleDetails['reporting_to']['name']));
+			$crmRoleInstance->setReportingTo(User::getInstance($roleDetails['reporting_to']['id'],$roleDetails['reporting_to']['name']));
 		}
 		return $crmRoleInstance;
 	}
@@ -149,7 +150,7 @@ class OrganizationAPIHandler extends APIHandler
 			$this->apiKey='users';
 			$responseInstance=APIRequest::getInstance($this)->getAPIResponse();
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -167,7 +168,7 @@ class OrganizationAPIHandler extends APIHandler
 			$responseInstance=APIRequest::getInstance($this)->getAPIResponse();
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -183,7 +184,7 @@ class OrganizationAPIHandler extends APIHandler
 			$responseInstance=APIRequest::getInstance($this)->getAPIResponse();
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -340,7 +341,7 @@ class OrganizationAPIHandler extends APIHandler
 			$responseInstance->setData($profileInstanceArray);
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -358,7 +359,7 @@ class OrganizationAPIHandler extends APIHandler
 			$responseInstance->setData(self::getZCRMProfile($profiles[0]));
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -367,25 +368,25 @@ class OrganizationAPIHandler extends APIHandler
 	
 	public function getZCRMProfile($profileDetails)
 	{
-		$profileInstance=ZCRMProfile::getInstance($profileDetails['id'],$profileDetails['name']);
+		$profileInstance=Profile::getInstance($profileDetails['id'],$profileDetails['name']);
 		$profileInstance->setCreatedTime($profileDetails['created_time']);
 		$profileInstance->setModifiedTime($profileDetails['modified_time']);
 		$profileInstance->setDescription($profileDetails['description']);
 		$profileInstance->setCategory($profileDetails['category']);
 		if($profileDetails['modified_by']!=null)
 		{
-			$profileInstance->setModifiedBy(ZCRMUser::getInstance($profileDetails['modified_by']['id'],$profileDetails['modified_by']['name']));
+			$profileInstance->setModifiedBy(User::getInstance($profileDetails['modified_by']['id'],$profileDetails['modified_by']['name']));
 		}
 		if($profileDetails['created_by']!=null)
 		{
-			$profileInstance->setCreatedBy(ZCRMUser::getInstance($profileDetails['created_by']['id'],$profileDetails['created_by']['name']));
+			$profileInstance->setCreatedBy(User::getInstance($profileDetails['created_by']['id'],$profileDetails['created_by']['name']));
 		}
 		if(isset($profileDetails['permissions_details']))
 		{
 			$permissions=$profileDetails['permissions_details'];
 			foreach ($permissions as $permission)
 			{
-				$perIns=ZCRMPermission::getInstance($permission['name'], $permission['id']);
+				$perIns=Permission::getInstance($permission['name'], $permission['id']);
 				$perIns->setDisplayLabel($permission['display_label']);
 				$perIns->setModule($permission['module']);
 				$perIns->setEnabled(boolval($permission['enabled']));
@@ -397,13 +398,13 @@ class OrganizationAPIHandler extends APIHandler
 			$sections=$profileDetails['sections'];
 			foreach ($sections as $section)
 			{
-				$zcrmProfileSection=ZCRMProfileSection::getInstance($section['name']);
+				$zcrmProfileSection=ProfileSection::getInstance($section['name']);
 				if(isset($section['categories']))
 				{
 					$categories=$section['categories'];
 					foreach ($categories as $category)
 					{
-						$categoryIns=ZCRMProfileCategory::getInstance($category['name']);
+						$categoryIns=ProfileCategory::getInstance($category['name']);
 						$categoryIns->setDisplayLabel($category['display_label']);
 						$categoryIns->setPermissionIds($category['permissions_details']);
 						if(isset($category['module']))
@@ -430,7 +431,7 @@ class OrganizationAPIHandler extends APIHandler
 			$responseInstance->setData(self::getZCRMUser($users[0]));
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -457,7 +458,7 @@ class OrganizationAPIHandler extends APIHandler
 			$responseInstance->setData($userInstanceArray);
 			
 			return $responseInstance;
-		}catch (ZCRMException $exception)
+		}catch (Exception $exception)
 		{
 			APIExceptionHandler::logException($exception);
 			throw $exception;
@@ -507,9 +508,9 @@ class OrganizationAPIHandler extends APIHandler
 	
 	public function getZCRMUser($userDetails)
 	{
-		$userInstance=ZCRMUser::getInstance($userDetails['id'],isset($userDetails['name'])?$userDetails['name']:null);
+		$userInstance=User::getInstance($userDetails['id'],isset($userDetails['name'])?$userDetails['name']:null);
 		$userInstance->setCountry(isset($userDetails['country'])?$userDetails['country']:null);
-		$roleInstance=ZCRMRole::getInstance($userDetails['role']['id'],$userDetails['role']['name']);
+		$roleInstance=Role::getInstance($userDetails['role']['id'],$userDetails['role']['name']);
 		$userInstance->setRole($roleInstance);
 		if(array_key_exists("customize_info",$userDetails))
 		{
@@ -538,7 +539,7 @@ class OrganizationAPIHandler extends APIHandler
 		$userInstance->setDecimalSeparator(isset($userDetails['decimal_separator'])?$userDetails['decimal_separator']:null);
 		$userInstance->setWebsite($userDetails['website']);
 		$userInstance->setTimeFormat($userDetails['time_format']);
-		$profile=ZCRMProfile::getInstance($userDetails['profile']['id'],$userDetails['profile']['name']);
+		$profile=Profile::getInstance($userDetails['profile']['id'],$userDetails['profile']['name']);
 		$userInstance->setProfile($profile);
 		$userInstance->setMobile($userDetails['mobile']);
 		$userInstance->setLastName($userDetails['last_name']);
@@ -560,7 +561,7 @@ class OrganizationAPIHandler extends APIHandler
 		$userInstance->setModifiedTime($userDetails['Modified_Time']);
 		foreach($userDetails as $key=>$value)
 		{
-			if(!in_array($key, ZCRMUser::$defaultKeys))
+			if(!in_array($key, User::$defaultKeys))
 			{
 				$userInstance->setFieldValue($key, $value);
 			}
@@ -571,7 +572,7 @@ class OrganizationAPIHandler extends APIHandler
 	
 	public function getZCRMUserCustomizeInfo($customizeInfo)
 	{
-		$customizeInfoInstance=ZCRMUserCustomizeInfo::getInstance();
+		$customizeInfoInstance=UserCustomizeInfo::getInstance();
 		if($customizeInfo['notes_desc']!=null)
 		{
 			$customizeInfoInstance->setNotesDesc($customizeInfo['notes_desc']);
@@ -601,7 +602,7 @@ class OrganizationAPIHandler extends APIHandler
 	
 	public function getZCRMUserTheme($themeDetails)
 	{
-		$themeInstance=ZCRMUserTheme::getInstance();
+		$themeInstance=UserTheme::getInstance();
 		$themeInstance->setNormalTabFontColor($themeDetails['normal_tab']['font_color']);
 		$themeInstance->setNormalTabBackground($themeDetails['normal_tab']['background']);
 		$themeInstance->setSelectedTabFontColor($themeDetails['selected_tab']['font_color']);

@@ -1,4 +1,5 @@
 <?php
+namespace ZCRM;
 require_once 'ZohoOAuthConstants.php';
 class ZohoOAuthHTTPConnector
 {

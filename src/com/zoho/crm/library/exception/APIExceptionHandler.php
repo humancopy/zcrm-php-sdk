@@ -1,10 +1,11 @@
 <?php
+namespace ZCRM;
 require_once 'Logger.php';
 require_once realpath(dirname(__FILE__)."/../common/APIConstants.php");
 
 class APIExceptionHandler
 {
-	public static function logException(ZCRMException $e)
+	public static function logException(Exception $e)
 	{
 		$msg=get_class($e)." Caused by:'{$e->getMessage()}' in {$e->getFile()}({$e->getLine()})\nTrace::".$e->getTraceAsString();
 		$message=$e->getMessage().";;Trace::".$e->getTraceAsString();
